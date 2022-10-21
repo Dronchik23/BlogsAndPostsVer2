@@ -11,6 +11,6 @@ export const bodyBlogIdValidation = body('blogId').trim().isLength({min:13, max:
 export const paramsBlogIdValidation = param('blogId').trim().notEmpty().isString()
 export const paramsPostIdValidation = param('id').trim().notEmpty().isString()
 
-export const loginValidation = body('login').trim().isLength({min:3, max:10}).isString()
+export const loginValidation = body('login').isString().trim().notEmpty().isLength({min:3, max:10})
 export const passwordValidation = body('password').trim().isLength({min:6, max:20}).isString()
 export const emailValidation = body('email').trim().isLength({min:3, max:100}).isString().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
