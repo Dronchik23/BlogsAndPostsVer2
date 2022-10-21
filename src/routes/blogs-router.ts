@@ -9,7 +9,7 @@ import {
     youtubeUrlValidation
 } from "../middlewares/validations";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
+import {queryParamsMiddleware, sortByFunction} from "../middlewares/query-params-parsing-middleware";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 
@@ -53,7 +53,7 @@ blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: Request, re
 
 })
 
-blogsRouter.post('/:blogId/posts', queryParamsMiddleware, basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware, async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', queryParamsMiddleware, basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware, sortByFunction,  async (req: Request, res: Response) => {
     const blog = await blogsService.findBlogById(req.params.blogId)
     if (!blog) return res.sendStatus(404)
     const newPost = await postsService.createPost(

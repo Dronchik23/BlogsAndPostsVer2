@@ -5,6 +5,15 @@ import {query} from "express-validator";
 const queryPageNumberValidation = query('pageNumber').toInt(10).default(1)
 const queryPageSizeValidation = query('pageSize').toInt(10).default(10)
 
+export const sortByFunction = (sortBy: any) => {
+    const defaultSortBy = 'createdAt'
+    if (!sortBy) {
+        sortBy = defaultSortBy
+    } else {
+        sortBy = sortBy
+    }
+    return sortBy
+}
 
 
 const queryParamsSortByMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -21,5 +30,5 @@ const queryParamsSortByMiddleware = (req: Request, res: Response, next: NextFunc
 }
 
 export const queryParamsMiddleware = [queryPageNumberValidation, queryPageSizeValidation,
-    queryParamsSortByMiddleware
+    //queryParamsSortByMiddleware
 ]
