@@ -8,6 +8,7 @@ export const blogsRepository = {
         const filter = {
             name: {$regex: searchNameTerm ? searchNameTerm : ''},
         }
+
         const sortedBlogs = blogsCollection.find(filter, {projection:{_id:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy] : sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs
     },
