@@ -18,7 +18,7 @@ blogsRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
     const sortBy: any = req.query.sortBy
     const sortDirection: any = req.query.sortDirection
 
-    const allBlogs = await blogsService.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber, null)
+    const allBlogs = await blogsService.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
 
     return res.send(allBlogs)
 })
