@@ -17,7 +17,7 @@ usersRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
         const sortBy: any = req.query.sortBy
         const sortDirection: any = req.query.sortDirection
 
-        const allUsers = await usersService.findAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber)
+        const allUsers = await usersService.findAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber, null)
         return res.send(allUsers)
     })
 
