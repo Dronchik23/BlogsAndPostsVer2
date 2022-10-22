@@ -35,9 +35,9 @@ export const blogsRepository = {
         const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
-    async getBlogsCount(filter: Filter<any>){
-        return blogsCollection.countDocuments(filter)
-        console.log(filter)
+    async getBlogsCount({}) {
+        const result =  await blogsCollection.countDocuments()
+        return result
     },
     async deleteAllBlogs() {
         return blogsCollection.deleteMany({})
