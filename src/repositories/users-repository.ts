@@ -6,8 +6,9 @@ import {UserDBType, UserType} from "./types";
 export const usersRepository = {
     async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<UserType[]> {
         const filter = {
-            email: {$regex: searchEmailTerm ? searchEmailTerm : ''},
-            login: {$regex: searchLoginTerm ? searchLoginTerm : ''}
+                email: {$regex: searchEmailTerm ? searchEmailTerm : ''},
+                login: {$regex: searchLoginTerm ? searchLoginTerm : ''}
+
         }
         const sortedUsers = await usersCollection.find(filter, {
             projection: {
