@@ -7,13 +7,14 @@ import {
     shortDescriptionValidation,
     titleValidation
 } from "../middlewares/validations";
-import {queryParamsMiddleware, sortByFunction} from "../middlewares/query-params-parsing-middleware";
+import {queryParamsMiddleware,} from "../middlewares/query-params-parsing-middleware";
 import {postsService} from "../domain/posts-service";
 
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', queryParamsMiddleware, sortByFunction, async (req: Request, res: Response) => {
+postsRouter.get('/', queryParamsMiddleware,
+    async (req: Request, res: Response) => {
     const pageNumber: any = req.query.pageNumber
     const pageSize: any = req.query.pageSize
     const sortBy: any = req.query.sortBy

@@ -1,8 +1,6 @@
 import {Request, Response, Router} from "express";
 import {usersService} from "../domain/users-service";
-import {
-    queryParamsMiddleware, sortByFunction,
-} from "../middlewares/query-params-parsing-middleware";
+import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
@@ -22,7 +20,7 @@ usersRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
         return res.send(allUsers)
     })
 
-usersRouter.post('/', queryParamsMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware, sortByFunction, async (req: Request, res: Response) => {
+usersRouter.post('/', queryParamsMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
         const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         res.status(201).send(newUser)
     })

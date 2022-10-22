@@ -30,5 +30,5 @@ const queryParamsSortByMiddleware = (req: Request, res: Response, next: NextFunc
 }
 
 export const queryParamsMiddleware = [queryPageNumberValidation, queryPageSizeValidation,
-    //queryParamsSortByMiddleware
+    queryParamsSortByMiddleware
 ]
