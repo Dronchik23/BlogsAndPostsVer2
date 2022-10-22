@@ -43,7 +43,6 @@ export const usersRepository = {
         const filter = {
             email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
             login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
-
         }
         return usersCollection.countDocuments(filter)
     },
@@ -55,3 +54,4 @@ export const usersRepository = {
         return usersCollection.deleteMany({})
     }
 }
+///
