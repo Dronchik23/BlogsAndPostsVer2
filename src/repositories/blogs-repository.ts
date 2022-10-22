@@ -1,9 +1,6 @@
 import {blogsCollection} from "../db"
 import {Filter} from "mongodb"
 import {BlogType} from "./types";
-import {NextFunction, Request, Response} from "express";
-import {sortByFunction} from "../middlewares/query-params-parsing-middleware";
-
 
 
 export const blogsRepository = {
@@ -11,7 +8,7 @@ export const blogsRepository = {
         const filter = {
             name: {$regex: searchNameTerm ? searchNameTerm : ''},
         }
-        const sortedBlogs = blogsCollection.find(filter, {projection:{_id:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy] : sortDirection === 'asc' ? 1 : -1}).toArray()
+        const sortedBlogs = blogsCollection.find({filter}, {projection:{_id:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy] : sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs
     },
     async findBlogById(id: any): Promise<BlogType  | null> {
