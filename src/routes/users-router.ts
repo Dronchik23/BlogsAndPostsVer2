@@ -3,6 +3,7 @@ import {usersService} from "../domain/users-service";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
+import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 
 
 export const usersRouter = Router({})
@@ -20,12 +21,12 @@ usersRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
         return res.send(allUsers)
     })
 
-usersRouter.post('/', queryParamsMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
         const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         res.status(201).send(newUser)
     })
 
-usersRouter.delete('/:id', queryParamsMiddleware, async (req: Request, res: Response) => {
+usersRouter.delete('/:id', basicAuthMiddleware,  queryParamsMiddleware, async (req: Request, res: Response) => {
         const isDeleted = await usersService.deleteUserById(req.params.id)
         if (isDeleted) {
             res.sendStatus(204)

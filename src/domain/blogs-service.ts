@@ -3,10 +3,9 @@ import {BlogType, PaginationType} from "../repositories/types";
 
 
 export const blogsService = {
-    async findAllBlogs(searchNameTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any): Promise<PaginationType> {
-
+    async findAllBlogs(searchNameTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any, filter: any): Promise<PaginationType> {
         const allBlogs = await blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
-        const totalCount = await blogsRepository.getBlogsCount({})
+        const totalCount = await blogsRepository.getBlogsCount({filter})
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
             page: pageNumber,
