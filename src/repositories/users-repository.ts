@@ -6,8 +6,8 @@ import {UserDBType, UserType} from "./types";
 export const usersRepository = {
     async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<UserType[]> {
         const filter = {
-                email: {$regex: searchEmailTerm ? searchEmailTerm : ''},
-                login: {$regex: searchLoginTerm ? searchLoginTerm : ''}
+                email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
+                login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
 
         }
         const sortedUsers = await usersCollection.find(filter, {
@@ -38,7 +38,13 @@ export const usersRepository = {
     async findByLogin(loginOrEmail: string): Promise<UserDBType | null> {
         return usersCollection.findOne({login: loginOrEmail})
     },
-    async getUsersCount(filter: Filter<UserType>) {
+    async getUsersCount(searchEmailTerm: any, searchLoginTerm: any) {
+
+        const filter = {
+            email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
+            login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
+
+        }
         return usersCollection.countDocuments(filter)
     },
     async deleteUserById(id: string) {

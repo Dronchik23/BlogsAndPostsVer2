@@ -3,18 +3,16 @@ import {BlogType} from "./types";
 import {Filter} from "mongodb";
 
 
-
-
 export const blogsRepository = {
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<BlogType[]> {
         const filter = {
-            name: {$regex: searchNameTerm ? searchNameTerm : ''}
+            name: {$regex: searchNameTerm ? searchNameTerm : '', $options: 'i'}
         }
-        const sortedBlogs = blogsCollection.find(filter, {projection:{_id:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy] : sortDirection === 'asc' ? 1 : -1}).toArray()
+        const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs
     },
-    async findBlogById(id: any): Promise<BlogType  | null> {
-        let blog: BlogType | null = await blogsCollection.findOne({id: id}, {projection:{_id:0}})
+    async findBlogById(id: any): Promise<BlogType | null> {
+        let blog: BlogType | null = await blogsCollection.findOne({id: id}, {projection: {_id: 0}})
         return blog
     },
     async createBlog(newBlog: BlogType): Promise<BlogType> {
@@ -39,7 +37,7 @@ export const blogsRepository = {
         const filter = {
             name: {$regex: searchNameTerm ? searchNameTerm : ''}
         }
-       return await blogsCollection.countDocuments(filter)
+        return await blogsCollection.countDocuments(filter)
     },
     async deleteAllBlogs() {
         return blogsCollection.deleteMany({})

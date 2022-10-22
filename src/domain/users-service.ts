@@ -18,7 +18,7 @@ export const usersService = {
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any, filter: any): Promise<PaginationType> {
         const allUsers = await usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber)
 
-        const totalCount = await usersRepository.getUsersCount(filter)
+        const totalCount = await usersRepository.getUsersCount(searchEmailTerm, searchLoginTerm)
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
             page: pageNumber,
