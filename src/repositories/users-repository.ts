@@ -38,13 +38,9 @@ export const usersRepository = {
     async findByLogin(loginOrEmail: string): Promise<UserDBType | null> {
         return usersCollection.findOne({login: loginOrEmail})
     },
-    async getUsersCount(searchEmailTerm: any, searchLoginTerm: any) {
+    async getUsersCount() {
 
-        const filter = {
-            email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
-            login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
-        }
-        return usersCollection.countDocuments(filter)
+        return usersCollection.countDocuments()
     },
     async deleteUserById(id: string) {
         const result = await usersCollection.deleteOne({id: id})
