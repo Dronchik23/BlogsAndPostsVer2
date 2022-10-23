@@ -1,15 +1,20 @@
 import {usersCollection} from "../db";
 import {Filter, ObjectId} from "mongodb";
-import {UserDBType, UserType} from "./types";
+import {BlogType, UserDBType, UserType} from "./types";
+
+type searchLoginOrEmailTermType = string | undefined | null
+
+const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<UserDBType> => {
+    return {
+        email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
+        login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
+    }
+}
 
 
 export const usersRepository = {
     async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<UserType[]> {
-        const filter = {
-                email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
-                login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
-
-        }
+        const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
         const sortedUsers = await usersCollection.find(filter, {
             projection: {
                 _id: 0,
@@ -38,9 +43,9 @@ export const usersRepository = {
     async findByLogin(loginOrEmail: string): Promise<UserDBType | null> {
         return usersCollection.findOne({login: loginOrEmail})
     },
-    async getUsersCount() {
-
-        return usersCollection.countDocuments()
+    async getUsersCount(searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType) {
+        const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
+        return usersCollection.countDocuments(filter)
     },
     async deleteUserById(id: string) {
         const result = await usersCollection.deleteOne({id: id})

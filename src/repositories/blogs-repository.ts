@@ -3,11 +3,14 @@ import {BlogType} from "./types";
 import {Filter} from "mongodb";
 
 
+const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogType> => {
+    return {name: {$regex: searchNameTerm ? searchNameTerm : '', $options:'i'}}
+}
+
+
 export const blogsRepository = {
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<BlogType[]> {
-        const filter = {
-            name: {$regex: searchNameTerm ? searchNameTerm : '', $options: 'i'}
-        }
+        const filter = searchNameTermFilter(searchNameTerm)
         const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs
     },
@@ -17,7 +20,7 @@ export const blogsRepository = {
     },
     async createBlog(newBlog: BlogType): Promise<BlogType> {
         const {id, name, youtubeUrl, createdAt} = newBlog
-        const result = await blogsCollection.insertOne({id, name, youtubeUrl, createdAt})
+        await blogsCollection.insertOne({id, name, youtubeUrl, createdAt})
         return newBlog
     },
     async updateBlogById(id: string, name: string, youtubeUrl: string) {
@@ -34,9 +37,7 @@ export const blogsRepository = {
         return result.deletedCount === 1
     },
     async getBlogsCount(searchNameTerm?: any) {
-        const filter = {
-            name: {$regex: searchNameTerm ? searchNameTerm : ''}
-        }
+        const filter = searchNameTermFilter(searchNameTerm)
         return await blogsCollection.countDocuments(filter)
     },
     async deleteAllBlogs() {
