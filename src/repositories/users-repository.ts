@@ -5,9 +5,10 @@ import {BlogType, UserDBType, UserType} from "./types";
 type searchLoginOrEmailTermType = string | undefined | null
 
 const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<UserDBType> => {
-    return {
-        email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'},
-        login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}
+    return { $or: [
+            { email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'}},
+            {login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}}
+        ]
     }
 }
 
