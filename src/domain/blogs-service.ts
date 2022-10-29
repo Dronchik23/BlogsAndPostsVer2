@@ -6,8 +6,9 @@ export const blogsService = {
     async findAllBlogs(searchNameTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any): Promise<PaginationType> {
         const allBlogs = await blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
         const totalCount = await blogsRepository.getBlogsCount(searchNameTerm)
+        const pagesCount = Math.ceil(totalCount / pageSize)
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: pagesCount === 0 ? 1 : pagesCount,
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,

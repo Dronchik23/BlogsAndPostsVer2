@@ -7,7 +7,7 @@ import {usersRouter} from "./routes/users-router";
 import {authRouter} from "./routes/auth-router";
 import {testingRouter} from "./routes/testing-router";
 
-const app = express()
+export const app = express()
 
 app.use(express.json())
 

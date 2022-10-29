@@ -6,9 +6,9 @@ export const postsService = {
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<PaginationType> {
         const allPosts = await postsRepository.findAllPosts(pageSize, sortBy, sortDirection, pageNumber)
         const totalCount = await postsRepository.getPostsCount({})
-
+        const pagesCount = Math.ceil(totalCount / pageSize)
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: pagesCount === 0 ? 1 : pagesCount,
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,

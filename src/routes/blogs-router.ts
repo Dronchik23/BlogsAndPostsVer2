@@ -78,8 +78,6 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 })
 
-//const updateBlogValidation = [nameValidation]
-
 blogsRouter.put('/:blogId', basicAuthMiddleware,
     nameValidation,
     youtubeUrlValidation,

@@ -17,10 +17,10 @@ const fromUserDBTypeToUserType = (user: UserDBType): UserType => {
 export const usersService = {
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any, filter: any): Promise<PaginationType> {
         const allUsers = await usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber)
-
         const totalCount = await usersRepository.getUsersCount(searchLoginTerm, searchEmailTerm)
+        const pagesCount = Math.ceil(totalCount / pageSize)
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: pagesCount === 0 ? 1 : pagesCount,
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
