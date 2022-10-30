@@ -29,8 +29,8 @@ export const usersRepository = {
         await usersCollection.insertOne(userForSave)
         return userForSave
     },
-    async findUserById(id: ObjectId): Promise<UserDBType | null> {
-        let user = await usersCollection.findOne({_id: id})
+    async findUserById(id: string): Promise<UserDBType | null> {
+        let user = await usersCollection.findOne({id})
         if (user) {
             return user
         } else {

@@ -44,3 +44,12 @@ export type PaginationType2<T> = {
     totalCount: number
     items: T
 }
+
+
+declare global {
+    namespace Express {
+        export interface Request {
+            user: UserType | null
+        }
+    }
+}

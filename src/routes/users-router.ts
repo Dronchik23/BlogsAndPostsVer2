@@ -4,6 +4,7 @@ import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middlew
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
+import {blogsService} from "../domain/blogs-service";
 
 
 export const usersRouter = Router({})
@@ -20,6 +21,17 @@ usersRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
         const allUsers = await usersService.findAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber, null)
         return res.send(allUsers)
     })
+
+usersRouter.get('/:id', async(req: Request, res: Response) => {
+
+    const user = await usersService.findUserById(req.params.id)
+    if (user) {
+        res.send(user)
+    } else {
+        res.sendStatus(404)
+        return;
+    }
+})
 
 usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
         const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)

@@ -45,7 +45,7 @@ export const usersService = {
         console.log(newUser)
         return fromUserDBTypeToUserType(newUser)
     },
-    async findUserById(id: ObjectId): Promise<UserType | null> {
+    async findUserById(id: string): Promise<UserType | null> {
         const user = await usersRepository.findUserById(id)
         if (!user) return null
         return fromUserDBTypeToUserType(user)
@@ -57,7 +57,7 @@ export const usersService = {
         if (user.passwordHash !== passwordHash) {
             return false
         }
-        return true
+        return user
     },
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
