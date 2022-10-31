@@ -4,7 +4,6 @@ import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middlew
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
-import {blogsService} from "../domain/blogs-service";
 
 
 export const usersRouter = Router({})

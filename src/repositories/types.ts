@@ -1,5 +1,13 @@
 import {ObjectId} from "mongodb";
 
+export type CommentType = {
+    id: string
+    content: string
+    userId: string
+    userLogin: string
+    createdAt: Date
+}
+
 export type BlogType = {
     id: string
     name: string
@@ -14,6 +22,7 @@ export type PostType = {
     blogId: string
     blogName: string
     createdAt: Date
+    userId?: string
 }
 export type UserDBType = {
     _id: ObjectId

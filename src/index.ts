@@ -1,11 +1,11 @@
-import express, {Request, Response} from 'express'
+import express from 'express'
 import {runDb} from "./db"
 import {blogsRouter} from "./routes/blogs-router"
 import {postsRouter} from "./routes/posts-router"
-import {removeAll} from "./common/autotest";
 import {usersRouter} from "./routes/users-router";
 import {authRouter} from "./routes/auth-router";
 import {testingRouter} from "./routes/testing-router";
+import {commentsRouter} from "./routes/comments-router";
 
 export const app = express()
 
@@ -20,6 +20,7 @@ app.use('/posts', postsRouter)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 app.use('/testing', testingRouter)
+app.use('/comments', commentsRouter)
 
 const startApp = async () => {
     await runDb()

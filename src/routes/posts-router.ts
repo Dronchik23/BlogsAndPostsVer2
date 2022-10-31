@@ -9,9 +9,39 @@ import {
 } from "../middlewares/validations";
 import {queryParamsMiddleware,} from "../middlewares/query-params-parsing-middleware";
 import {postsService} from "../domain/posts-service";
+import {commentsService} from "../domain/comments-service";
+import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 
 
 export const postsRouter = Router({})
+
+postsRouter.get('/:id/comments', authJWTMiddleware, async (req: Request, res: Response) => {
+    const id = req.params.id
+    const comments = await commentsService.findCommentsByPostId(id)
+    return comments
+})
+
+postsRouter.post('/:id/comments', authJWTMiddleware, async (req: Request, res: Response) => {
+    const id = req.params.id
+    const content = req.body.content
+
+    const user = req.user!
+
+    const newComment = await commentsService.createComment(id, content, user )
+    if (newComment) {
+        return res.status(201).send(newComment)
+    } else {
+        return res.status(401).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "postId"
+                }
+            ]
+        })
+    }
+
+})
 
 postsRouter.get('/', queryParamsMiddleware,
     async (req: Request, res: Response) => {
@@ -51,7 +81,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
         res.send(post)
     } else {
         res.sendStatus(404)
-        return;
+        return
     }
 })
 
