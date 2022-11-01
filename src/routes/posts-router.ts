@@ -3,7 +3,7 @@ import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
     bodyBlogIdValidation,
-    contentValidation, paramsPostIdValidation,
+    contentValidation,
     shortDescriptionValidation,
     titleValidation
 } from "../middlewares/validations";
@@ -11,28 +11,36 @@ import {queryParamsMiddleware,} from "../middlewares/query-params-parsing-middle
 import {postsService} from "../domain/posts-service";
 import {commentsService} from "../domain/comments-service";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
+import {PostType} from "../repositories/types";
 
 
 export const postsRouter = Router({})
 
 postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res: Response) => {
-    const id = req.params.id
+    const post = await postsService.findPostById(req.params.id)
+    if (!post) {
+        return res.sendStatus(404)
+    }
     const pageNumber: any = req.query.pageNumber
     const pageSize: any = req.query.pageSize
     const sortBy: any = req.query.sortBy
     const sortDirection: any = req.query.sortDirection
-
-    const comments = await commentsService.findCommentsByPostId(id, pageNumber, pageSize, sortBy, sortDirection)
+    const comments = await commentsService.findCommentsByPostId(post.id, pageNumber, pageSize, sortBy, sortDirection)
     return res.send(comments)
+
 })
 
-postsRouter.post('/:id/comments', authJWTMiddleware, async (req: Request, res: Response) => {
-    const id = req.params.id
+postsRouter.post('/:id/comments', authJWTMiddleware, contentValidation, inputValidationMiddleware, async (req: Request, res: Response) => {
+    const postId = req.params.id
     const content = req.body.content
-
     const user = req.user!
 
-    const newComment = await commentsService.createComment(id, content, user )
+    const post = await postsService.findPostById(postId)
+    if (!post) {
+        return res.sendStatus(404)
+    }
+
+    const newComment = await commentsService.createComment(postId, content, user )
     if (newComment) {
         return res.status(201).send(newComment)
     } else {
@@ -90,7 +98,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-postsRouter.put('/:id', basicAuthMiddleware, paramsPostIdValidation, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
     const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId,)
     if (isUpdated) {
         res.sendStatus(204)

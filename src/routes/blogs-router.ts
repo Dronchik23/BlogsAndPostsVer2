@@ -44,7 +44,6 @@ blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: Request, re
         return;
     }
 
-
 })
 
 blogsRouter.post('/:blogId/posts', queryParamsMiddleware, basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {

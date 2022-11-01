@@ -3,6 +3,7 @@ import {postsRepository} from "../repositories/posts-repository";
 import {commentsRepository} from "../repositories/comments-repository";
 import {postsService} from "./posts-service";
 import {blogsCollection} from "../db";
+import {promises} from "dns";
 
 
 export const commentsService = {
@@ -19,12 +20,17 @@ export const commentsService = {
             createdAt: new Date(),
             postId: postId
         }
-        const createdComment = await commentsRepository.createComment(newComment)
-        return createdComment
+        await commentsRepository.createComment(newComment)
+        return {
+            id: newComment.id,
+            content: newComment.content,
+            userId: newComment.userId,
+            userLogin: newComment.userLogin,
+            createdAt: newComment.createdAt
+        }
     },
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
 
-        console.log(pageSize)
         const foundPosts = await commentsRepository.findCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
         const totalCount = await commentsRepository.getPostsCount({postId: postId})
         const pagesCount = Math.ceil(totalCount / pageSize)
@@ -43,6 +49,9 @@ export const commentsService = {
     async findCommentById(commentId: string): Promise<any> {
         const foundComment = await commentsRepository.findCommentById(commentId)
         return foundComment
+    },
+    async deleteCommentById(commentId: string) {
+        return await commentsRepository.deleteCommentById(commentId)
     }
 }
 
