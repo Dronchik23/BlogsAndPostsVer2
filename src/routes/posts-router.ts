@@ -89,6 +89,7 @@ postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: Req
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
+    // test auto deploy
     const post = await postsService.findPostById(req.params.id)
     if (post) {
         res.send(post)
