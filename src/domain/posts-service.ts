@@ -32,8 +32,16 @@ export const postsService = {
             "blogName": blog.name,
             "createdAt": new Date()
         }
-        const createdPost = await postsRepository.createPost(newPost)
-        return createdPost
+        await postsRepository.createPost(newPost)
+        return {
+            id: newPost.id,
+            title: newPost.title,
+            shortDescription: newPost.shortDescription,
+            content: newPost.content,
+            blogId: newPost.blogId,
+            blogName: newPost.blogName,
+            createdAt: newPost.createdAt
+        }
     },
     async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<PostType | boolean> {
         return await postsRepository.updatePostById(id, title, shortDescription, content, blogId)
