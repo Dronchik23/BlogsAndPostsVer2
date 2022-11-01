@@ -55,5 +55,4 @@ export const postsService = {
             items: foundPostsById
         }
     },
-    // async findCommentsByPostId()
 }

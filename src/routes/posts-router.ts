@@ -15,14 +15,13 @@ import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', async (req: Request, res: Response) => {
+postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res: Response) => {
+    const id = req.params.id
     const pageNumber: any = req.query.pageNumber
     const pageSize: any = req.query.pageSize
     const sortBy: any = req.query.sortBy
     const sortDirection: any = req.query.sortDirection
 
-
-    const id = req.params.id
     const comments = await commentsService.findCommentsByPostId(id, pageNumber, pageSize, sortBy, sortDirection)
     return res.send(comments)
 })
@@ -61,9 +60,9 @@ postsRouter.get('/', queryParamsMiddleware,
     return res.send(allPosts)
 })
 
-const createPostValidation = [basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
+const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
 
-postsRouter.post('/', createPostValidation, async (req: Request, res: Response) => {
+postsRouter.post('/', authJWTMiddleware, createPostValidation, async (req: Request, res: Response) => {
     const newPost = await postsService.createPost(
         req.body.title, req.body.shortDescription, req.body.content, req.body.blogId, req.body.blogName)
 
@@ -91,7 +90,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-postsRouter.put('/:id', basicAuthMiddleware, paramsPostIdValidation, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+postsRouter.put('/:id', authJWTMiddleware, paramsPostIdValidation, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
     const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId,)
     if (isUpdated) {
         res.sendStatus(204)
@@ -100,7 +99,7 @@ postsRouter.put('/:id', basicAuthMiddleware, paramsPostIdValidation, bodyBlogIdV
     }
 })
 
-postsRouter.delete('/:id', basicAuthMiddleware, async (req: Request, res: Response) => {
+postsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response) => {
     const isDeleted = await postsService.deletePostById(req.params.id)
     if (isDeleted) {
         res.sendStatus(204)

@@ -22,14 +22,15 @@ export const commentsRepository = {
             createdAt: createdAt
         }
     },
-    async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string) {
-        const comments = await commentsCollection
+    async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
+
+        const sortedComments = await commentsCollection
             .find({postId: postId}, {projection: {_id: 0, postId: 0}})
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
             .toArray()
-        return comments
+        return sortedComments
     },
     async updateComment(commentId: string, content: string) {
         const result = await commentsCollection.updateOne({commentId}, {
@@ -42,7 +43,7 @@ export const commentsRepository = {
     async findCommentById(commentId: string) {
         return await commentsCollection.findOne({id: commentId}, {projection: {_id: 0}})
     },
-    async getPostsCount(filter: Filter<PostType>) {
-        return postsCollection.countDocuments(filter)
+    async getPostsCount(filter: Filter<CommentType>) {
+        return await commentsCollection.countDocuments(filter)
     }
 }

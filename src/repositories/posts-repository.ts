@@ -8,7 +8,7 @@ export const postsRepository = {
             return await postsCollection.find( {},{projection:{_id:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy] : sortDirection === 'asc' ? 1 : -1}).toArray();
     },
     async findPostById(id: string): Promise<PostType | null> {
-        const post = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
+        const post = await postsCollection.findOne({id: id})
         return post;
     },
     async createPost(newPost: PostType): Promise<PostType | null> {

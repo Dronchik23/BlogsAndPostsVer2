@@ -5,6 +5,7 @@ import {contentValidation, nameValidation, paramsBlogIdValidation, shortDescript
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
+import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 
 
 export const blogsRouter = Router({})
@@ -23,7 +24,7 @@ blogsRouter.get('/', queryParamsMiddleware, async (req: Request, res: Response) 
     return res.send(allBlogs)
 })
 
-blogsRouter.post('/', basicAuthMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation, async (req: Request, res: Response) => {
+blogsRouter.post('/', authJWTMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation, async (req: Request, res: Response) => {
 
     const newBlog = await blogsService.createBlog(req.body.name, req.body.youtubeUrl)
     return res.status(201).send(newBlog)
@@ -46,7 +47,7 @@ blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: Request, re
 
 })
 
-blogsRouter.post('/:blogId/posts', queryParamsMiddleware, basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+blogsRouter.post('/:blogId/posts', queryParamsMiddleware, authJWTMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
     const blog = await blogsService.findBlogById(req.params.blogId)
     if (!blog) return res.sendStatus(404)
     const newPost = await postsService.createPost(
@@ -78,7 +79,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 })
 
-blogsRouter.put('/:blogId', basicAuthMiddleware,
+blogsRouter.put('/:blogId', authJWTMiddleware,
     nameValidation,
     youtubeUrlValidation,
     inputValidationMiddleware, shortDescriptionValidation, paramsBlogIdValidation, async (req: Request, res: Response) => {
@@ -91,7 +92,7 @@ blogsRouter.put('/:blogId', basicAuthMiddleware,
         }
     })
 
-blogsRouter.delete('/:blogId', basicAuthMiddleware, async (req: Request, res: Response) => {
+blogsRouter.delete('/:blogId', authJWTMiddleware, async (req: Request, res: Response) => {
 
     const isDeleted = await blogsService.deleteBlogById(req.params.blogId)
     if (isDeleted) {

@@ -2,6 +2,7 @@ import {CommentType, PaginationType, PostType, UserType} from "../repositories/t
 import {postsRepository} from "../repositories/posts-repository";
 import {commentsRepository} from "../repositories/comments-repository";
 import {postsService} from "./posts-service";
+import {blogsCollection} from "../db";
 
 
 export const commentsService = {
@@ -22,8 +23,10 @@ export const commentsService = {
         return createdComment
     },
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
+
+        console.log(pageSize)
         const foundPosts = await commentsRepository.findCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
-        const totalCount = await commentsRepository.getPostsCount({})
+        const totalCount = await commentsRepository.getPostsCount({postId: postId})
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
@@ -42,3 +45,4 @@ export const commentsService = {
         return foundComment
     }
 }
+
