@@ -106,3 +106,4 @@ postsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response
     } else
         res.sendStatus(404)
 })
+///
