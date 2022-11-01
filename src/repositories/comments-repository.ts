@@ -1,25 +1,38 @@
-import {commentsCollection} from "../db";
-import {CommentType} from "./types";
+import {commentsCollection, postsCollection} from "../db";
+import {CommentType, PostType} from "./types";
+import {Filter} from "mongodb";
 
 export const commentsRepository = {
 
     async createComment(newComment: any) {
-        const {id, content, userId, userLogin, createdAt} = newComment
+        const {id, content, userId, userLogin, createdAt, postId} = newComment
         await commentsCollection.insertOne({
             id,
             content,
             userId,
             userLogin,
-            createdAt
+            createdAt,
+            postId
         })
-        return newComment;
+        return {
+            id: id,
+            content: content,
+            userId: userId,
+            userLogin: userLogin,
+            createdAt: createdAt
+        }
     },
-    async findCommentsById(postId: string) {
-       const comments =  await commentsCollection.find({id: postId}, {projection: {_id: 0}})
+    async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string) {
+        const comments = await commentsCollection
+            .find({postId: postId}, {projection: {_id: 0, postId: 0}})
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+            .toArray()
         return comments
     },
     async updateComment(commentId: string, content: string) {
-        const result =  await commentsCollection.updateOne({commentId}, {
+        const result = await commentsCollection.updateOne({commentId}, {
             $set: {
                 content: content
             }
@@ -28,5 +41,8 @@ export const commentsRepository = {
     },
     async findCommentById(commentId: string) {
         return await commentsCollection.findOne({id: commentId}, {projection: {_id: 0}})
+    },
+    async getPostsCount(filter: Filter<PostType>) {
+        return postsCollection.countDocuments(filter)
     }
 }

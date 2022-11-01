@@ -41,8 +41,6 @@ export const postsService = {
     async deletePostById(id: string): Promise<PostType | boolean> {
     return await postsRepository.deletePostById(id)
     },
-
-
     async findPostsByBlogId(blogId: string, pageNumber: any, pageSize: any, sortBy: any, sortDirection: any) {
         // это итемсы в объекте который в return
         const foundPostsById = await postsRepository.findPostsByBlogId(blogId, pageNumber, pageSize, sortBy, sortDirection)
@@ -56,5 +54,6 @@ export const postsService = {
             totalCount: totalCount,
             items: foundPostsById
         }
-    }
+    },
+    // async findCommentsByPostId()
 }

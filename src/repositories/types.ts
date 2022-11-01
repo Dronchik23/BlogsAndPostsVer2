@@ -6,6 +6,7 @@ export type CommentType = {
     userId: string
     userLogin: string
     createdAt: Date
+    postId: string
 }
 
 export type BlogType = {

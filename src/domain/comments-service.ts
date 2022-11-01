@@ -1,6 +1,7 @@
 import {CommentType, PaginationType, PostType, UserType} from "../repositories/types";
 import {postsRepository} from "../repositories/posts-repository";
 import {commentsRepository} from "../repositories/comments-repository";
+import {postsService} from "./posts-service";
 
 
 export const commentsService = {
@@ -14,14 +15,23 @@ export const commentsService = {
             content: content,
             userId: user.id,
             userLogin: user.login,
-            createdAt: new Date()
+            createdAt: new Date(),
+            postId: postId
         }
         const createdComment = await commentsRepository.createComment(newComment)
         return createdComment
     },
-    async findCommentsByPostId(postId: string): Promise<any> {
-        const foundPosts = await commentsRepository.findCommentsById(postId)
-        return foundPosts
+    async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
+        const foundPosts = await commentsRepository.findCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
+        const totalCount = await commentsRepository.getPostsCount({})
+        const pagesCount = Math.ceil(totalCount / pageSize)
+        return {
+            pagesCount: pagesCount === 0 ? 1 : pagesCount,
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: foundPosts
+        }
     },
     async updateComment(commentId: string, content: string): Promise<any> {
         return await commentsRepository.updateComment(commentId, content)

@@ -15,10 +15,16 @@ import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', authJWTMiddleware, async (req: Request, res: Response) => {
+postsRouter.get('/:id/comments', async (req: Request, res: Response) => {
+    const pageNumber: any = req.query.pageNumber
+    const pageSize: any = req.query.pageSize
+    const sortBy: any = req.query.sortBy
+    const sortDirection: any = req.query.sortDirection
+
+
     const id = req.params.id
-    const comments = await commentsService.findCommentsByPostId(id)
-    return comments
+    const comments = await commentsService.findCommentsByPostId(id, pageNumber, pageSize, sortBy, sortDirection)
+    return res.send(comments)
 })
 
 postsRouter.post('/:id/comments', authJWTMiddleware, async (req: Request, res: Response) => {
@@ -101,4 +107,3 @@ postsRouter.delete('/:id', basicAuthMiddleware, async (req: Request, res: Respon
     } else
         res.sendStatus(404)
 })
-///
