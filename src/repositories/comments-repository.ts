@@ -1,5 +1,5 @@
 import {commentsCollection, postsCollection} from "../db";
-import {CommentType, PostType} from "./types";
+import {CommentType, PostType, UserType} from "./types";
 import {Filter} from "mongodb";
 
 export const commentsRepository = {
@@ -35,13 +35,13 @@ export const commentsRepository = {
 
 
     },
-    async updateComment(commentId: string, content: string) {
-        const result = await commentsCollection.updateOne({id: commentId}, {
+    async updateComment(commentId: string, content: string, user: UserType) {
+        const result = await commentsCollection.updateOne({id: commentId, userId: user.id}, {
             $set: {
                 content: content
             }
         })
-        return result.matchedCount === 1
+        return result.modifiedCount === 1
     },
     async findCommentById(commentId: string) {
         return await commentsCollection.findOne({id: commentId}, {projection: {_id: 0, postId: 0}})

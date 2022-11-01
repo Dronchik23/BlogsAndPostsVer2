@@ -42,8 +42,8 @@ export const commentsService = {
             items: foundPosts
         }
     },
-    async updateComment(commentId: string, content: string): Promise<any> {
-        return await commentsRepository.updateComment(commentId, content)
+    async updateComment(commentId: string, content: string, user: UserType): Promise<any> {
+        return await commentsRepository.updateComment(commentId, content, user)
 
     },
     async findCommentById(commentId: string): Promise<any> {

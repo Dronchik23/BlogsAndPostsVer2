@@ -3,11 +3,13 @@ import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 import {commentsService} from "../domain/comments-service";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {contentValidation} from "../middlewares/validations";
+import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
 export const commentsRouter = Router({})
 
-commentsRouter.put('/:id', contentValidation, authJWTMiddleware, async (req: Request, res: Response) => {
-    const isUpdated = await commentsService.updateComment(req.params.id, req.body.content)
+commentsRouter.put('/:id', contentValidation, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
+    const user = req.user!
+    const isUpdated = await commentsService.updateComment(req.params.id, req.body.content, user)
     if (isUpdated) {
         res.sendStatus(204)
     } else {
