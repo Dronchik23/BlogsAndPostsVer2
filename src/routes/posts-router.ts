@@ -62,7 +62,7 @@ postsRouter.get('/', queryParamsMiddleware,
 
 const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
 
-postsRouter.post('/', authJWTMiddleware, createPostValidation, async (req: Request, res: Response) => {
+postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: Request, res: Response) => {
     const newPost = await postsService.createPost(
         req.body.title, req.body.shortDescription, req.body.content, req.body.blogId, req.body.blogName)
 
@@ -90,7 +90,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-postsRouter.put('/:id', authJWTMiddleware, paramsPostIdValidation, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+postsRouter.put('/:id', basicAuthMiddleware, paramsPostIdValidation, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
     const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId,)
     if (isUpdated) {
         res.sendStatus(204)
@@ -99,11 +99,10 @@ postsRouter.put('/:id', authJWTMiddleware, paramsPostIdValidation, bodyBlogIdVal
     }
 })
 
-postsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response) => {
+postsRouter.delete('/:id', basicAuthMiddleware, async (req: Request, res: Response) => {
     const isDeleted = await postsService.deletePostById(req.params.id)
     if (isDeleted) {
         res.sendStatus(204)
     } else
         res.sendStatus(404)
 })
-///
