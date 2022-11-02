@@ -9,6 +9,10 @@ export const commentsRouter = Router({})
 
 commentsRouter.put('/:id', contentValidation, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
     const user = req.user!
+   const commentId = await commentsService.findCommentById(req.params.id)
+    if(!commentId) {
+        res.sendStatus(404)
+    } else return
     const isUpdated = await commentsService.updateComment(req.params.id, req.body.content, user)
     if (isUpdated) {
         res.sendStatus(204)
@@ -26,7 +30,7 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-commentsRouter.delete('/:id', async (req: Request, res: Response) => {
+commentsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response) => {
     const isDeleted = await commentsService.deleteCommentById(req.params.id)
     if (isDeleted) {
         res.sendStatus(204)
