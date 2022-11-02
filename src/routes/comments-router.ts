@@ -12,7 +12,7 @@ commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, input
    const commentId = await commentsService.findCommentById(req.params.id)
     if(!commentId) {
         res.sendStatus(404)
-    } else return
+    }
     const isUpdated = await commentsService.updateComment(req.params.id, req.body.content, user)
     if (isUpdated) {
         res.sendStatus(204)
