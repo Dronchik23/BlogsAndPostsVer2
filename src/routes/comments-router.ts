@@ -31,7 +31,8 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 commentsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response) => {
-    const isDeleted = await commentsService.deleteCommentById(req.params.id)
+    const user = req.user!
+    const isDeleted = await commentsService.deleteCommentById(req.params.id, user)
     if (isDeleted) {
         res.sendStatus(204)
     } else {

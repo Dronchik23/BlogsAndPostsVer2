@@ -49,8 +49,8 @@ export const commentsRepository = {
     async getPostsCount(filter: Filter<CommentType>) {
         return await commentsCollection.countDocuments(filter)
     },
-    async deleteCommentById(commentId: string) {
-        const result =  await commentsCollection.deleteOne({id: commentId})
+    async deleteCommentById(commentId: string, user: UserType) {
+        const result =  await commentsCollection.deleteOne({id: commentId, userId: user.id})
         return result.deletedCount === 1
     }
 }

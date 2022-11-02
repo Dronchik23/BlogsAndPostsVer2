@@ -31,7 +31,7 @@ export const commentsService = {
     },
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
 
-        const foundPosts = await commentsRepository.findCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
+        const foundComments = await commentsRepository.findCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
         const totalCount = await commentsRepository.getPostsCount({postId: postId})
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
@@ -39,7 +39,7 @@ export const commentsService = {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: foundPosts
+            items: foundComments
         }
     },
     async updateComment(commentId: string, content: string, user: UserType): Promise<any> {
@@ -50,8 +50,8 @@ export const commentsService = {
         const foundComment = await commentsRepository.findCommentById(commentId)
         return foundComment
     },
-    async deleteCommentById(commentId: string) {
-        return await commentsRepository.deleteCommentById(commentId)
+    async deleteCommentById(commentId: string, user: UserType) {
+        return await commentsRepository.deleteCommentById(commentId, user)
     }
 }
 
