@@ -16,7 +16,7 @@ import {PostType} from "../repositories/types";
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res: Response) => {
+postsRouter.get('/:id/comments',  async (req: Request, res: Response) => {
     const post = await postsService.findPostById(req.params.id)
     if (!post) {
         return res.sendStatus(404)
