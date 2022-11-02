@@ -6,7 +6,7 @@ import {UserType} from "../repositories/types"
 export const jwtService = {
 
     async createJWT(user: UserType) {
-        const token = jwt.sign({userId: user.id}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const token = jwt.sign({userId: user.id}, settings.JWT_SECRET, {expiresIn: '8h'})
         return token
     },
     async getUserIdByToken(token: string) {
