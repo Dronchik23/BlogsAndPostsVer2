@@ -3,7 +3,7 @@ import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
     bodyBlogIdValidation,
-    contentValidation,
+    contentValidation, contentValidationForComment,
     shortDescriptionValidation,
     titleValidation
 } from "../middlewares/validations";
@@ -30,7 +30,7 @@ postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res
 
 })
 
-postsRouter.post('/:id/comments', authJWTMiddleware, contentValidation, inputValidationMiddleware, async (req: Request, res: Response) => {
+postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: Request, res: Response) => {
     const postId = req.params.id
     const content = req.body.content
     const user = req.user!

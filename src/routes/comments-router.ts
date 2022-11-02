@@ -2,12 +2,12 @@ import {Request, Response, Router} from "express";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 import {commentsService} from "../domain/comments-service";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
-import {contentValidation} from "../middlewares/validations";
+import {contentValidation, contentValidationForComment} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
 export const commentsRouter = Router({})
 
-commentsRouter.put('/:id', contentValidation, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
+commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
     const user = req.user!
    const commentId = await commentsService.findCommentById(req.params.id)
     if(!commentId) {
