@@ -9,9 +9,9 @@ export const commentsRouter = Router({})
 
 commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
     const user = req.user!
-   const commentId = await commentsService.findCommentById(req.params.id)
-    if(!commentId) {
-        res.sendStatus(404)
+    const comment = await commentsService.findCommentById(req.params.id)
+    if (!comment) {
+        return res.sendStatus(404)
     }
     const isUpdated = await commentsService.updateComment(req.params.id, req.body.content, user)
     if (isUpdated) {
@@ -23,10 +23,10 @@ commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, input
 
 commentsRouter.get('/:id', async (req: Request, res: Response) => {
     const comment = await commentsService.findCommentById(req.params.id)
-    if(comment) {
-        res.status(200).send(comment)
+    if (comment) {
+        return res.status(200).send(comment)
     } else {
-        res.sendStatus(404)
+        return res.sendStatus(404)
     }
 })
 
@@ -34,14 +34,14 @@ commentsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Respo
     const user = req.user!
     const commentId = req.params.id
     const comment = await commentsService.findCommentById(commentId)
-    if(!comment) {
-        res.sendStatus(404)
+    if (!comment) {
+        return res.sendStatus(404)
     }
     const isDeleted = await commentsService.deleteCommentById(req.params.id, user)
     if (isDeleted) {
-        res.sendStatus(204)
+        return res.sendStatus(204)
     } else {
-        res.sendStatus(403)
+        return res.sendStatus(403)
     }
 })
 
