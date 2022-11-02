@@ -9,7 +9,7 @@ export const postsRepository = {
     },
     async findPostById(id: string): Promise<PostType | null> {
         const post = await postsCollection.findOne({id: id}, {projection:{_id:0}})
-        return post;
+        return post
     },
     async createPost(newPost: PostType): Promise<PostType | null> {
         const {id, title, shortDescription, content, blogId, blogName, createdAt} = newPost
