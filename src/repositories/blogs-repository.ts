@@ -1,6 +1,7 @@
 import {blogsCollection} from "../db"
 import {BlogType} from "./types";
 import {Filter} from "mongodb";
+import {BlogViewModel} from "../models/models";
 
 
 const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogType> => {
@@ -9,7 +10,7 @@ const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter
 
 
 export const blogsRepository = {
-    async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<BlogType[]> {
+    async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<BlogViewModel[]> {
         const filter = searchNameTermFilter(searchNameTerm)
         const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs

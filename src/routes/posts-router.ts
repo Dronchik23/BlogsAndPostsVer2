@@ -11,12 +11,22 @@ import {queryParamsMiddleware,} from "../middlewares/query-params-parsing-middle
 import {postsService} from "../domain/posts-service";
 import {commentsService} from "../domain/comments-service";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
-import {PostType} from "../repositories/types";
+import {
+    ErrorType,
+    PaginationType,
+    PostType,
+    RequestWithBody,
+    RequestWithParams,
+    RequestWithParamsAndBody,
+    RequestWithQuery
+} from "../repositories/types";
+import {PaginationInputQueryModel, PostCreateModel, PostUpdateModel, PostViewModel} from "../models/models";
 
+const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res: Response) => {
+postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithParamsAndBody<any, any>, res: Response) => {
     const post = await postsService.findPostById(req.params.id)
     if (!post) {
         return res.sendStatus(404)
@@ -30,7 +40,7 @@ postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: Request, res
 
 })
 
-postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: Request, res: Response) => {
+postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: RequestWithParamsAndBody<any, any>, res: Response) => {
     const postId = req.params.id
     const content = req.body.content
     const user = req.user!
@@ -56,8 +66,7 @@ postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment
 
 })
 
-postsRouter.get('/', queryParamsMiddleware,
-    async (req: Request, res: Response) => {
+postsRouter.get('/', queryParamsMiddleware, async (req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) => {
     const pageNumber: any = req.query.pageNumber
     const pageSize: any = req.query.pageSize
     const sortBy: any = req.query.sortBy
@@ -68,9 +77,7 @@ postsRouter.get('/', queryParamsMiddleware,
     return res.send(allPosts)
 })
 
-const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
-
-postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: Request, res: Response) => {
+postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorType>) => {
     const newPost = await postsService.createPost(
         req.body.title, req.body.shortDescription, req.body.content, req.body.blogId, req.body.blogName)
 
@@ -88,8 +95,7 @@ postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: Req
     }
 })
 
-postsRouter.get('/:id', async (req: Request, res: Response) => {
-    // test auto deploy
+postsRouter.get('/:id', async (req: RequestWithParams<{id: string}>, res: Response<PostViewModel>) => {
     const post = await postsService.findPostById(req.params.id)
     if (post) {
         res.send(post)
@@ -99,7 +105,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: Request, res: Response) => {
+postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: RequestWithParamsAndBody<{id: string}, PostUpdateModel>, res: Response<PostViewModel>) => {
     const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId,)
     if (isUpdated) {
         res.sendStatus(204)
@@ -108,7 +114,7 @@ postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidati
     }
 })
 
-postsRouter.delete('/:id', basicAuthMiddleware, async (req: Request, res: Response) => {
+postsRouter.delete('/:id', basicAuthMiddleware, async (req: RequestWithParams<{id: string}>, res: Response) => {
     const isDeleted = await postsService.deletePostById(req.params.id)
     if (isDeleted) {
         res.sendStatus(204)

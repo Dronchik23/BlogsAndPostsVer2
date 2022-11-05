@@ -1,4 +1,6 @@
-import {ObjectId} from "mongodb";
+import {ObjectId} from "mongodb"
+import {Request} from "express"
+import {BlogViewModel, PostViewModel, UserViewModel} from "../models/models";
 
 export type CommentType = {
     id: string
@@ -8,7 +10,6 @@ export type CommentType = {
     createdAt: Date
     postId: string
 }
-
 export type BlogType = {
     id: string
     name: string
@@ -45,15 +46,16 @@ export type PaginationType = {
     page: number
     pageSize: number
     totalCount: number
-    items: BlogType[] | PostType[] | UserType[] | UserDBType[]
+    items: BlogViewModel[] | PostViewModel[] | UserViewModel[]
 }
-export type PaginationType2<T> = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: T
+export type ErrorType = {
+    errorsMessages: [{message: string, field: string}]
 }
+
+export type RequestWithBody<T> = Request<{}, {}, T>
+export type RequestWithQuery<T> = Request<{}, {}, {}, T>
+export type RequestWithParams<T> = Request<T>
+export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
 
 
 declare global {
