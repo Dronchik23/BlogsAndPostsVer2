@@ -56,3 +56,14 @@ export type UserViewModel = {
     email: string
     createdAt: Date
 }
+export type CommentCreateModel = {
+    content: string
+}
+
+export type CommentViewModel = {
+    id: string
+    content: string
+    userId: string
+    userLogin: string
+    createdAt: Date
+}

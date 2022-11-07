@@ -20,13 +20,20 @@ import {
     RequestWithParamsAndBody,
     RequestWithQuery
 } from "../repositories/types";
-import {PaginationInputQueryModel, PostCreateModel, PostUpdateModel, PostViewModel} from "../models/models";
+import {
+    CommentCreateModel,
+    CommentViewModel,
+    PaginationInputQueryModel,
+    PostCreateModel,
+    PostUpdateModel,
+    PostViewModel
+} from "../models/models";
 
 const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithParamsAndBody<any, any>, res: Response) => {
+postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithParamsAndBody<{id: string}, PaginationInputQueryModel>, res: Response<PaginationType>) => {
     const post = await postsService.findPostById(req.params.id)
     if (!post) {
         return res.sendStatus(404)
@@ -40,7 +47,7 @@ postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithP
 
 })
 
-postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: RequestWithParamsAndBody<any, any>, res: Response) => {
+postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: RequestWithParamsAndBody<{id: string}, CommentCreateModel>, res: Response<CommentViewModel | ErrorType>) => {
     const postId = req.params.id
     const content = req.body.content
     const user = req.user!

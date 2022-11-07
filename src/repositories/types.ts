@@ -1,6 +1,6 @@
 import {ObjectId} from "mongodb"
 import {Request} from "express"
-import {BlogViewModel, PostViewModel, UserViewModel} from "../models/models";
+import {BlogViewModel, CommentViewModel, PostViewModel, UserViewModel} from "../models/models";
 
 export type CommentType = {
     id: string
@@ -46,7 +46,7 @@ export type PaginationType = {
     page: number
     pageSize: number
     totalCount: number
-    items: BlogViewModel[] | PostViewModel[] | UserViewModel[]
+    items: BlogViewModel[] | PostViewModel[] | UserViewModel[] | CommentViewModel
 }
 export type ErrorType = {
     errorsMessages: [{message: string, field: string}]
