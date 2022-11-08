@@ -29,10 +29,15 @@ export type PostType = {
 export type UserDBType = {
     _id: ObjectId
     id: string
-    login: string
+    accountData: accountData
+    emailConfirmation: EmailConfirmationType
+    passwordSalt?: string
+    passwordHash?: string
+}
+export type accountData = {
+    username: string
     email: string
     passwordHash: string
-    passwordSalt: string
     createdAt: Date
 }
 export type UserType = {
@@ -50,6 +55,14 @@ export type PaginationType = {
 }
 export type ErrorType = {
     errorsMessages: [{message: string, field: string}]
+}
+export type EmailConfirmationType = {
+    isConfirmed: boolean
+    confirmationCode: string
+    expirationDate: Date
+}
+export type SentEmailType = {
+    sentDate: Date
 }
 
 export type RequestWithBody<T> = Request<{}, {}, T>

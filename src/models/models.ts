@@ -56,6 +56,7 @@ export type UserViewModel = {
     email: string
     createdAt: Date
 }
+
 export type CommentCreateModel = {
     content: string
 }

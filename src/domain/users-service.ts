@@ -2,17 +2,10 @@ import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {usersRepository} from "../repositories/users-repository";
 import {PaginationType, UserDBType, UserType} from "../repositories/types";
-import {isBooleanObject} from "util/types";
+import {v4 as uuidv4} from 'uuid';
+import {add} from 'date-fns'
 
 
-const fromUserDBTypeToUserType = (user: UserDBType): UserType => {
-    return {
-        id: user.id,
-        login: user.login,
-        email: user.email,
-        createdAt: user.createdAt
-    }
-}
 
 export const usersService = {
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any, filter: any): Promise<PaginationType> {
@@ -32,33 +25,42 @@ export const usersService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
 
-        const newUser: UserDBType = {
+        const user: UserDBType = {
             _id: new ObjectId(),
             id: (+(new Date())).toString(),
-            login,
-            email,
-            passwordHash,
-            passwordSalt,
-            createdAt: new Date()
+            accountData: {
+                username: login,
+                email,
+                passwordHash,
+                createdAt: new Date()
+            },
+            emailConfirmation: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), {hours: 2, minutes: 3}),
+                isConfirmed: false,
+            }
         }
-        await usersRepository.createUser(newUser)
-        console.log(newUser)
-        return fromUserDBTypeToUserType(newUser)
+        const result = await usersRepository.createUser(user)
+        console.log(user)
+        return result
     },
-    async findUserById(id: string): Promise<UserType | null> {
+    async findUserById(id: string): Promise<UserDBType | null> {
         const user = await usersRepository.findUserById(id)
-        if (!user) return null
-        return fromUserDBTypeToUserType(user)
-    },
-    async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
-        const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-        if (!user) return false
-        const passwordHash = await this._generateHash(password, user.passwordSalt)
-        if (user.passwordHash !== passwordHash) {
-            return false
+        if (user) {
+            return user
+        } else {
+            return null
         }
-        return user
     },
+    // async checkCredentials(loginOrEmail: string, password: string): Promise<UserDBType | boolean> {
+    //     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+    //     if (!user) return false
+    //     const passwordHash = await this._generateHash(password, user.accountData.passwordHash)
+    //     if (user.passwordHash !== passwordHash) {
+    //         return false
+    //     }
+    //     return user
+    // },
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash

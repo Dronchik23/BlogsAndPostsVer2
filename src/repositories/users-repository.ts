@@ -1,10 +1,29 @@
 import {usersCollection} from "../db";
 import {Filter, ObjectId} from "mongodb";
 import {BlogType, UserDBType, UserType} from "./types";
+import {UserViewModel} from "../models/models";
 
 type searchLoginOrEmailTermType = string | undefined | null
 
-const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<UserDBType> => {
+const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
+    return {
+        id: user._id.toString(),
+        login: user.accountData.username,
+        email: user.accountData.email,
+        createdAt: user.accountData.createdAt
+    }
+}
+
+const fromUserDBTypeToUserTypeForArray = (user: UserDBType[]): UserViewModel[] => {
+    return {
+        id: user[0]._id.toString(),
+        login: user[1].accountData.username,
+        email: user[2].accountData.email,
+        createdAt: user[3].accountData.createdAt
+    }
+}
+
+const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<any> => {
     return { $or: [
             { email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'}},
             {login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}}
@@ -14,20 +33,19 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
 
 
 export const usersRepository = {
-    async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<UserType[]> {
+    async getAllUsers(searchLoginTerm: string, searchEmailTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel> {
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
         const sortedUsers = await usersCollection.find(filter, {
             projection: {
-                _id: 0,
                 passwordHash: 0,
                 passwordSalt: 0
             }
-        }).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
-        return sortedUsers
+        }).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+        return fromUserDBTypeToUserTypeForArray(sortedUsers)
     },
-    async createUser(userForSave: UserDBType): Promise<UserDBType> {
+    async createUser(userForSave: UserDBType): Promise<UserType> {
         await usersCollection.insertOne(userForSave)
-        return userForSave
+        return fromUserDBTypeToUserType(userForSave)
     },
     async findUserById(id: string): Promise<UserDBType | null> {
         let user = await usersCollection.findOne({id})
@@ -41,8 +59,9 @@ export const usersRepository = {
         const user = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
         return user
     },
-    async findByLogin(loginOrEmail: string): Promise<UserDBType | null> {
-        return usersCollection.findOne({login: loginOrEmail})
+    async updateConfirmation(id: any) {
+        let result = await usersCollection.updateOne({id}, {$set: {'emailConfirmation.isConfirmed': true}})
+        return result.modifiedCount === 1
     },
     async getUsersCount(searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType) {
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
@@ -56,4 +75,3 @@ export const usersRepository = {
         return usersCollection.deleteMany({})
     }
 }
-///
