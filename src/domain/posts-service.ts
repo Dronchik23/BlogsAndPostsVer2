@@ -1,6 +1,6 @@
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {BlogType, PaginationType, PostType} from "../repositories/types";
+import {BlogType, PaginationType, PostType} from "../types/types";
 
 export const postsService = {
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<PaginationType> {

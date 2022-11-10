@@ -1,5 +1,5 @@
 import {MongoClient, ObjectId} from 'mongodb'
-import {BlogType, CommentType, PostType, UserDBType} from "./repositories/types";
+import {BlogType, CommentType, PostType, UserDBType} from "./types/types";
 
 const mongoUri = "mongodb+srv://solikamsk:solikamsk@cluster0.uu9g6jj.mongodb.net/?retryWrites=true&w=majority"
 

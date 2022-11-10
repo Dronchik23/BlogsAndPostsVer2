@@ -1,5 +1,5 @@
 import {commentsCollection, postsCollection} from "../db";
-import {CommentType, PostType, UserType} from "./types";
+import {CommentType, PostType, UserType} from "../types/types";
 import {Filter} from "mongodb";
 
 export const commentsRepository = {

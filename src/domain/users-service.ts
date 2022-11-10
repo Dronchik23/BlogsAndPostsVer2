@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {usersRepository} from "../repositories/users-repository";
-import {PaginationType, UserDBType, UserType} from "../repositories/types";
+import {PaginationType, UserDBType, UserType} from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import {add} from 'date-fns'
+import {UserViewModel} from "../models/models";
 
 
 
@@ -44,7 +45,7 @@ export const usersService = {
         console.log(user)
         return result
     },
-    async findUserById(id: string): Promise<UserDBType | null> {
+    async findUserById(id: string): Promise<UserViewModel | null> {
         const user = await usersRepository.findUserById(id)
         if (user) {
             return user

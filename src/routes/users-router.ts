@@ -4,7 +4,7 @@ import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middlew
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
-import {PaginationType, RequestWithBody, RequestWithParams, RequestWithQuery} from "../repositories/types";
+import {PaginationType, RequestWithBody, RequestWithParams, RequestWithQuery} from "../types/types";
 import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../models/models";
 
 
@@ -27,7 +27,7 @@ usersRouter.get('/:id', async(req: RequestWithParams<{id: string }>, res: Respon
 
     const user = await usersService.findUserById(req.params.id)
     if (user) {
-        res.send(user)
+        return res.send(user)
     } else {
         res.sendStatus(404)
         return;

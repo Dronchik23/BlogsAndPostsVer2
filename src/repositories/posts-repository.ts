@@ -1,6 +1,6 @@
 import {postsCollection} from "../db";
 import {Filter} from "mongodb";
-import {PostType} from "./types";
+import {PostType} from "../types/types";
 
 
 export const postsRepository = {

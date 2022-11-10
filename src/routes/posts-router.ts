@@ -19,7 +19,7 @@ import {
     RequestWithParams,
     RequestWithParamsAndBody,
     RequestWithQuery
-} from "../repositories/types";
+} from "../types/types";
 import {
     CommentCreateModel,
     CommentViewModel,

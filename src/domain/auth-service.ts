@@ -1,4 +1,4 @@
-import {EmailConfirmationType, UserDBType, UserType} from "../repositories/types";
+import {EmailConfirmationType, UserDBType, UserType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
 import {ObjectId} from "mongodb";

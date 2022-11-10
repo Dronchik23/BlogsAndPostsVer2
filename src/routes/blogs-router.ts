@@ -11,7 +11,7 @@ import {
     RequestWithParams,
     RequestWithParamsAndBody,
     RequestWithQuery
-} from "../repositories/types";
+} from "../types/types";
 import {BlogCreateModel, BlogUpdateModel, BlogViewModel, PaginationInputQueryModel} from "../models/models";
 
 

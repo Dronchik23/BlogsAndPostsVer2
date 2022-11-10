@@ -1,6 +1,6 @@
 import {usersCollection} from "../db";
-import {Filter, ObjectId} from "mongodb";
-import {BlogType, UserDBType, UserType} from "./types";
+import {Filter} from "mongodb";
+import { UserDBType, UserType} from "../types/types";
 import {UserViewModel} from "../models/models";
 
 type searchLoginOrEmailTermType = string | undefined | null
@@ -14,13 +14,13 @@ const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
     }
 }
 
-const fromUserDBTypeToUserTypeForArray = (user: UserDBType[]): UserViewModel[] => {
-    return {
-        id: user[0]._id.toString(),
-        login: user[1].accountData.username,
-        email: user[2].accountData.email,
-        createdAt: user[3].accountData.createdAt
-    }
+const fromUserDBTypeToUserTypeForArray = (users: UserDBType[]): UserViewModel[] => {
+    return users.map(u => ({
+        id: u._id.toString(),
+        login: u.accountData.username,
+        email: u.accountData.email,
+        createdAt: u.accountData.createdAt
+    }))
 }
 
 const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<any> => {
@@ -33,24 +33,22 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
 
 
 export const usersRepository = {
-    async getAllUsers(searchLoginTerm: string, searchEmailTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel> {
+    async getAllUsers(searchLoginTerm: string, searchEmailTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
-        const sortedUsers = await usersCollection.find(filter, {
-            projection: {
-                passwordHash: 0,
-                passwordSalt: 0
-            }
-        }).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+        const sortedUsers = await usersCollection.find(filter).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
+
         return fromUserDBTypeToUserTypeForArray(sortedUsers)
+
     },
     async createUser(userForSave: UserDBType): Promise<UserType> {
+
         await usersCollection.insertOne(userForSave)
         return fromUserDBTypeToUserType(userForSave)
     },
-    async findUserById(id: string): Promise<UserDBType | null> {
+    async findUserById(id: string): Promise<UserViewModel | null> {
         let user = await usersCollection.findOne({id})
         if (user) {
-            return user
+            return fromUserDBTypeToUserType(user)
         } else {
             return null
         }

@@ -1,5 +1,5 @@
 import {blogsCollection} from "../db"
-import {BlogType} from "./types";
+import {BlogType} from "../types/types";
 import {Filter} from "mongodb";
 import {BlogViewModel} from "../models/models";
 
@@ -10,12 +10,12 @@ const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter
 
 
 export const blogsRepository = {
-    async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<BlogViewModel[]> {
+    async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<BlogViewModel[]> {
         const filter = searchNameTermFilter(searchNameTerm)
         const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
         return sortedBlogs
     },
-    async findBlogById(id: any): Promise<BlogType | null> {
+    async findBlogById(id: string): Promise<BlogType | null> {
         let blog: BlogType | null = await blogsCollection.findOne({id: id}, {projection: {_id: 0}})
         return blog
     },
@@ -37,7 +37,7 @@ export const blogsRepository = {
         const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
-    async getBlogsCount(searchNameTerm?: any) {
+    async getBlogsCount(searchNameTerm?: string) {
         const filter = searchNameTermFilter(searchNameTerm)
         return await blogsCollection.countDocuments(filter)
     },

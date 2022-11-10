@@ -1,4 +1,4 @@
-import {CommentType, PaginationType, PostType, UserType} from "../repositories/types";
+import {CommentType, PaginationType, PostType, UserType} from "../types/types";
 import {postsRepository} from "../repositories/posts-repository";
 import {commentsRepository} from "../repositories/comments-repository";
 import {postsService} from "./posts-service";
