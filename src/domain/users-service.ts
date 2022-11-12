@@ -9,7 +9,7 @@ import {UserViewModel} from "../models/models";
 
 
 export const usersService = {
-    async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: any, sortBy: any, sortDirection: any, pageNumber: any, filter: any): Promise<PaginationType> {
+    async findAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageNumber: any, pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationType> {
         const allUsers = await usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber)
         const totalCount = await usersRepository.getUsersCount(searchLoginTerm, searchEmailTerm)
         const pagesCount = Math.ceil(totalCount / pageSize)

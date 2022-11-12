@@ -12,18 +12,15 @@ export const usersRouter = Router({})
 
 usersRouter.get('/', queryParamsMiddleware, async (req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) => {
 
-        const searchLoginTerm: any = req.query.searchLoginTerm
-        const searchEmailTerm: any = req.query.searchEmailTerm
-        const pageNumber: any = req.query.pageNumber
-        const pageSize: any = req.query.pageSize
-        const sortBy: any = req.query.sortBy
-        const sortDirection: any = req.query.sortDirection
 
-        const allUsers = await usersService.findAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy, sortDirection, pageNumber, null)
-        return res.send(allUsers)
-    })
+    const {searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
 
-usersRouter.get('/:id', async(req: RequestWithParams<{id: string }>, res: Response<UserViewModel>) => {
+    const allUsers = await usersService.findAllUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
+
+    return res.send(allUsers)
+})
+
+usersRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Response<UserViewModel>) => {
 
     const user = await usersService.findUserById(req.params.id)
     if (user) {
@@ -34,16 +31,16 @@ usersRouter.get('/:id', async(req: RequestWithParams<{id: string }>, res: Respon
     }
 })
 
-usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware,  async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) => {
-        const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
-        res.status(201).send(newUser)
-    })
+usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation, inputValidationMiddleware, async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) => {
+    const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
+    res.status(201).send(newUser)
+})
 
-usersRouter.delete('/:id', basicAuthMiddleware,  queryParamsMiddleware, async (req: RequestWithParams<{id: string}>, res: Response) => {
-        const isDeleted = await usersService.deleteUserById(req.params.id)
-        if (isDeleted) {
-            res.sendStatus(204)
-        } else {
-            res.sendStatus(404)
-        }
-    })
+usersRouter.delete('/:id', basicAuthMiddleware, queryParamsMiddleware, async (req: RequestWithParams<{ id: string }>, res: Response) => {
+    const isDeleted = await usersService.deleteUserById(req.params.id)
+    if (isDeleted) {
+        res.sendStatus(204)
+    } else {
+        res.sendStatus(404)
+    }
+})

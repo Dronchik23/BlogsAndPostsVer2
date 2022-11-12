@@ -3,7 +3,7 @@ import {Filter} from "mongodb";
 import { UserDBType, UserType} from "../types/types";
 import {UserViewModel} from "../models/models";
 
-type searchLoginOrEmailTermType = string | undefined | null
+type searchLoginOrEmailTermType = string | undefined
 
 const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
     return {
@@ -25,14 +25,14 @@ const fromUserDBTypeToUserTypeForArray = (users: UserDBType[]): UserViewModel[] 
 
 const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<any> => {
     return { $or: [
-            { email: {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'}},
-            {login: {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}}
+            { "accountData.email": {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'}},
+            {"accountData.userName": {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}}
         ]
     }
 }
 
 export const usersRepository = {
-    async getAllUsers(searchLoginTerm: string, searchEmailTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
+    async getAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
         const sortedUsers = await usersCollection.find(filter).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
 
@@ -53,7 +53,7 @@ export const usersRepository = {
         }
     },
     async findByLoginOrEmail(loginOrEmail: string) {
-        const user = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+        const user = await usersCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.userName": loginOrEmail}]})
         return user
     },
     async updateConfirmation(id: any) {
