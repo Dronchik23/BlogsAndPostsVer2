@@ -15,11 +15,11 @@ const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
 }
 
 const fromUserDBTypeToUserTypeForArray = (users: UserDBType[]): UserViewModel[] => {
-    return users.map(u => ({
-        id: u._id.toString(),
-        login: u.accountData.userName,
-        email: u.accountData.email,
-        createdAt: u.accountData.createdAt
+    return users.map(user => ({
+        id: user._id.toString(),
+        login: user.accountData.userName,
+        email: user.accountData.email,
+        createdAt: user.accountData.createdAt
     }))
 }
 
