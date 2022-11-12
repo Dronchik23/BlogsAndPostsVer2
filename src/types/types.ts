@@ -35,7 +35,7 @@ export type UserDBType = {
     passwordHash?: string
 }
 export type accountData = {
-    username: string
+    userName: string
     email: string
     passwordHash: string
     createdAt: Date

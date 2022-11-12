@@ -34,7 +34,7 @@ export const usersService = {
             _id: new ObjectId(),
             id: (+(new Date())).toString(),
             accountData: {
-                username: login,
+                userName: login,
                 email,
                 passwordHash,
                 createdAt: new Date()

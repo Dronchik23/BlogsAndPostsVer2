@@ -8,7 +8,7 @@ type searchLoginOrEmailTermType = string | undefined
 const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
     return {
         id: user._id.toString(),
-        login: user.accountData.username,
+        login: user.accountData.userName,
         email: user.accountData.email,
         createdAt: user.accountData.createdAt
     }
@@ -17,7 +17,7 @@ const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
 const fromUserDBTypeToUserTypeForArray = (users: UserDBType[]): UserViewModel[] => {
     return users.map(u => ({
         id: u._id.toString(),
-        login: u.accountData.username,
+        login: u.accountData.userName,
         email: u.accountData.email,
         createdAt: u.accountData.createdAt
     }))
@@ -58,7 +58,6 @@ export const usersRepository = {
     async findByLoginOrEmail(loginOrEmail: string) {
         const user = await usersCollection.findOne({$or: [{"accountData.email": loginOrEmail},
                 {"accountData.userName": loginOrEmail}]})
-
         return user
     },
     async updateConfirmation(id: any) {
