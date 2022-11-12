@@ -2,7 +2,7 @@ import {usersCollection} from "../db";
 import {Filter} from "mongodb";
 import { UserDBType, UserType} from "../types/types";
 import {UserViewModel} from "../models/models";
-
+//
 type searchLoginOrEmailTermType = string | undefined
 
 const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
@@ -23,7 +23,8 @@ const fromUserDBTypeToUserTypeForArray = (users: UserDBType[]): UserViewModel[] 
     }))
 }
 
-const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType): Filter<any> => {
+const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermType,
+                                       searchEmailTerm: searchLoginOrEmailTermType): Filter<any> => {
     return { $or: [
             { "accountData.email": {$regex: searchEmailTerm ? searchEmailTerm : '', $options: 'i'}},
             {"accountData.userName": {$regex: searchLoginTerm ? searchLoginTerm : '', $options: 'i'}}
@@ -32,15 +33,17 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
 }
 
 export const usersRepository = {
-    async getAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
+    async getAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageSize: number,
+                      sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
+
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
-        const sortedUsers = await usersCollection.find(filter).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
+        const sortedUsers = await usersCollection.find(filter).skip((pageNumber - 1) * pageSize).limit(pageSize)
+            .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
 
         return fromUserDBTypeToUserTypeForArray(sortedUsers)
 
     },
     async createUser(userForSave: UserDBType): Promise<UserType> {
-
         await usersCollection.insertOne(userForSave)
         return fromUserDBTypeToUserType(userForSave)
     },
@@ -53,7 +56,9 @@ export const usersRepository = {
         }
     },
     async findByLoginOrEmail(loginOrEmail: string) {
-        const user = await usersCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.userName": loginOrEmail}]})
+        const user = await usersCollection.findOne({$or: [{"accountData.email": loginOrEmail},
+                {"accountData.userName": loginOrEmail}]})
+
         return user
     },
     async updateConfirmation(id: any) {
