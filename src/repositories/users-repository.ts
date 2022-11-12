@@ -33,7 +33,7 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
 }
 
 export const usersRepository = {
-    async getAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageSize: number,
+    async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number,
                       sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
 
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)

@@ -9,7 +9,7 @@ import {UserViewModel} from "../models/models";
 
 
 export const usersService = {
-    async findAllUsers(searchLoginTerm: string | undefined, searchEmailTerm: string | undefined, pageNumber: any,
+    async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageNumber: any,
                        pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationType> {
 
         const allUsers = await usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy,
