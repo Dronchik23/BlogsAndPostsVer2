@@ -8,11 +8,15 @@ const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter
     return {name: {$regex: searchNameTerm ? searchNameTerm : '', $options:'i'}}
 }
 
-
 export const blogsRepository = {
-    async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string, pageNumber: number): Promise<BlogViewModel[]> {
+    async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string,
+                       pageNumber: number): Promise<BlogViewModel[]> {
         const filter = searchNameTermFilter(searchNameTerm)
-        const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({[sortBy]: sortDirection === 'asc' ? 1 : -1}).toArray()
+        const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}})
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+            .toArray()
         return sortedBlogs
     },
     async findBlogById(id: string): Promise<BlogType | null> {

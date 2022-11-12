@@ -29,11 +29,14 @@ import {
     PostViewModel
 } from "../models/models";
 
-const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation, inputValidationMiddleware]
+const createPostValidation = [titleValidation, shortDescriptionValidation, contentValidation, bodyBlogIdValidation,
+    inputValidationMiddleware]
 
 export const postsRouter = Router({})
 
-postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithParamsAndBody<{id: string}, PaginationInputQueryModel>, res: Response<PaginationType>) => {
+postsRouter.get('/:id/comments', queryParamsMiddleware,
+    async (req: RequestWithParamsAndBody<{id: string}, PaginationInputQueryModel>, res: Response<PaginationType>) => {
+
     const post = await postsService.findPostById(req.params.id)
     if (!post) {
         return res.sendStatus(404)
@@ -47,7 +50,10 @@ postsRouter.get('/:id/comments', queryParamsMiddleware, async (req: RequestWithP
 
 })
 
-postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware, async (req: RequestWithParamsAndBody<{id: string}, CommentCreateModel>, res: Response<CommentViewModel | ErrorType>) => {
+postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment, inputValidationMiddleware,
+    async (req: RequestWithParamsAndBody<{id: string},
+        CommentCreateModel>, res: Response<CommentViewModel | ErrorType>) => {
+
     const postId = req.params.id
     const content = req.body.content
     const user = req.user!
@@ -73,7 +79,9 @@ postsRouter.post('/:id/comments', authJWTMiddleware, contentValidationForComment
 
 })
 
-postsRouter.get('/', queryParamsMiddleware, async (req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) => {
+postsRouter.get('/', queryParamsMiddleware,
+    async (req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) => {
+
     const pageNumber: any = req.query.pageNumber
     const pageSize: any = req.query.pageSize
     const sortBy: any = req.query.sortBy
@@ -84,7 +92,9 @@ postsRouter.get('/', queryParamsMiddleware, async (req: RequestWithQuery<Paginat
     return res.send(allPosts)
 })
 
-postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorType>) => {
+postsRouter.post('/', basicAuthMiddleware, createPostValidation,
+    async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorType>) => {
+
     const newPost = await postsService.createPost(
         req.body.title, req.body.shortDescription, req.body.content, req.body.blogId, req.body.blogName)
 
@@ -103,6 +113,7 @@ postsRouter.post('/', basicAuthMiddleware, createPostValidation, async (req: Req
 })
 
 postsRouter.get('/:id', async (req: RequestWithParams<{id: string}>, res: Response<PostViewModel>) => {
+
     const post = await postsService.findPostById(req.params.id)
     if (post) {
         res.send(post)
@@ -112,8 +123,12 @@ postsRouter.get('/:id', async (req: RequestWithParams<{id: string}>, res: Respon
     }
 })
 
-postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidationMiddleware,  async (req: RequestWithParamsAndBody<{id: string}, PostUpdateModel>, res: Response<PostViewModel>) => {
-    const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId,)
+postsRouter.put('/:id', basicAuthMiddleware, bodyBlogIdValidation, titleValidation, shortDescriptionValidation,
+    contentValidation, inputValidationMiddleware,
+    async (req: RequestWithParamsAndBody<{id: string}, PostUpdateModel>, res: Response<PostViewModel>) => {
+
+    const isUpdated = await postsService.updatePostById(req.params.id, req.body.title, req.body.shortDescription,
+        req.body.content, req.body.blogId)
     if (isUpdated) {
         res.sendStatus(204)
     } else {

@@ -7,7 +7,9 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 
 export const commentsRouter = Router({})
 
-commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, inputValidationMiddleware, async (req: Request, res: Response) => {
+commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
     const user = req.user!
     const comment = await commentsService.findCommentById(req.params.id)
     if (!comment) {
@@ -22,6 +24,7 @@ commentsRouter.put('/:id', contentValidationForComment, authJWTMiddleware, input
 })
 
 commentsRouter.get('/:id', async (req: Request, res: Response) => {
+
     const comment = await commentsService.findCommentById(req.params.id)
     if (comment) {
         return res.status(200).send(comment)
@@ -31,6 +34,7 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 commentsRouter.delete('/:id', authJWTMiddleware, async (req: Request, res: Response) => {
+
     const user = req.user!
     const commentId = req.params.id
     const comment = await commentsService.findCommentById(commentId)

@@ -31,14 +31,16 @@ blogsRouter.get('/', queryParamsMiddleware,
 })
 
 blogsRouter.post('/',
-    basicAuthMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation, async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel>) => {
+    basicAuthMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation,
+    async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel>) => {
 
     const newBlog = await blogsService.createBlog(req.body.name, req.body.youtubeUrl)
     return res.status(201).send(newBlog)
 
 })
 
-blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: RequestWithParamsAndBody<{blogId: string}, PaginationInputQueryModel>, res: Response) => {
+blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: RequestWithParamsAndBody<{blogId: string},
+    PaginationInputQueryModel>, res: Response) => {
 
     const {pageNumber, pageSize, sortBy, sortDirection} = req.query
     const blog = await blogsService.findBlogById(req.params.blogId)
@@ -54,8 +56,9 @@ blogsRouter.get('/:blogId/posts', queryParamsMiddleware, async (req: RequestWith
 })
 
 blogsRouter.post('/:blogId/posts', queryParamsMiddleware,
-    basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation, inputValidationMiddleware,
-    async (req: RequestWithParamsAndBody<{blogId: string}, {title: string, shortDescription: string, content: string, blogId: string, blogName: string}>, res: Response) => {
+    basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation,
+    inputValidationMiddleware, async (req: RequestWithParamsAndBody<{blogId: string}, {title: string,
+        shortDescription: string, content: string, blogId: string, blogName: string}>, res: Response) => {
 
     const blog = await blogsService.findBlogById(req.params.blogId)
     if (!blog) return res.sendStatus(404)
@@ -91,7 +94,8 @@ blogsRouter.get('/:id', async (req: RequestWithParams<{id: string}>, res: Respon
 blogsRouter.put('/:blogId', basicAuthMiddleware,
     nameValidation,
     youtubeUrlValidation,
-    inputValidationMiddleware, shortDescriptionValidation, paramsBlogIdValidation, async (req: RequestWithParamsAndBody<{blogId: string}, BlogUpdateModel>, res: Response) => {
+    inputValidationMiddleware, shortDescriptionValidation, paramsBlogIdValidation,
+    async (req: RequestWithParamsAndBody<{blogId: string}, BlogUpdateModel>, res: Response) => {
 
     const isUpdated = await blogsService.updateBlogById(req.params.blogId, req.body.name, req.body.youtubeUrl)
         if (isUpdated) {
@@ -101,7 +105,8 @@ blogsRouter.put('/:blogId', basicAuthMiddleware,
         }
     })
 
-blogsRouter.delete('/:blogId', basicAuthMiddleware, async (req: RequestWithParams<{blogId: string}>, res: Response) => {
+blogsRouter.delete('/:blogId', basicAuthMiddleware,
+    async (req: RequestWithParams<{blogId: string}>, res: Response) => {
 
     const isDeleted = await blogsService.deleteBlogById(req.params.blogId)
     if (isDeleted) {
