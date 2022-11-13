@@ -5,7 +5,7 @@ import {PaginationType, UserDBType, UserType} from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import {add} from 'date-fns'
 import {UserViewModel} from "../models/models";
-
+import {emailService} from "./email-service";
 
 
 export const usersService = {
@@ -46,7 +46,13 @@ export const usersService = {
             }
         }
         const result = await usersRepository.createUser(user)
-        console.log(user)
+
+        try {
+            await emailService.sendEmailConfirmationMessage(user)
+        } catch (err) {
+            console.error(err)
+            await usersRepository.deleteUserById(user.id)
+        }
         return result
     },
     async findUserById(id: string): Promise<UserViewModel | null> {

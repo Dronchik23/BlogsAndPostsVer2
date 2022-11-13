@@ -5,6 +5,6 @@ export const emailRouter = Router({})
 
 emailRouter
     .post('/send', async (req: Request, res: Response) => {
-        await emailService.doOperation()
+        await emailService.sendEmail(req.body.email, req.body.subject, req.body.message)
             res.sendStatus(204)
 })

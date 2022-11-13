@@ -1,12 +1,7 @@
-import {EmailConfirmationType, UserDBType, UserType} from "../types/types";
+import {EmailConfirmationType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
-import {ObjectId} from "mongodb";
-import {emailManager} from "../manager/email-manager"
-import {v4 as uuidv4} from 'uuid';
-import {add} from 'date-fns'
-import {usersCollection} from "../db";
-import {usersService} from "./users-service";
+
 
 export const authService = {
     async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
