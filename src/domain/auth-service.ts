@@ -27,8 +27,8 @@ export const authService = {
         const isEqual = await bcrypt.compare(password, hash)
         return isEqual
     },
-    async confirmEmail(code: string, email: string): Promise<boolean> {
-        let user = await usersRepository.findByLoginOrEmail(email)
+    async confirmEmail(code: string): Promise<boolean> {
+        let user = await usersRepository.findUserByConfirmationCode(code)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
         if (user.emailConfirmation.confirmationCode !== code) return false

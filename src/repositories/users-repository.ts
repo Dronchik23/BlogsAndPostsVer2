@@ -60,6 +60,10 @@ export const usersRepository = {
                 {"accountData.userName": loginOrEmail}]})
         return user
     },
+    async findUserByConfirmationCode(code: string) {
+        const user = await usersCollection.findOne({"emailConfirmation.confirmationCode": code})
+            return user
+    },
     async updateConfirmation(id: any) {
         let result = await usersCollection.updateOne({id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
