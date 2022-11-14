@@ -5,7 +5,7 @@ export const emailService = {
         await emailAdapter.sendEmail(email, subject, message)
     },
     async sendEmailConfirmationMessage(user: any) {
-        await emailAdapter.sendEmail(user.accountData.email, 'Confirm your email bitch' ,
-            `http://localhost:2000/auth/registration/?code=${user.emailConfirmation.confirmationCode}`)
+        await emailAdapter.sendEmail(user.accountData.email,
+            'Confirm your email' , `<div>${user.emailConfirmation.confirmationCode}message</div>`)
     }
 }
