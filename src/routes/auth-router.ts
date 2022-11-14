@@ -11,6 +11,27 @@ import {usersRepository} from "../repositories/users-repository";
 
 export const authRouter = Router({})
 
+authRouter.post('/login',
+    async (req: Request, res: Response) => {
+        const user = await authService.checkCredentials(req.body.login, req.body.password)
+        if (user) {
+            const accessToken = await jwtService.createJWT(user)
+            return res.send({accessToken})
+        } else {
+            return res.sendStatus(401)
+        }
+    })
+
+authRouter.post('/registration-confirmation',
+    async (req: Request, res: Response) => {
+        const result = await authService.confirmEmail(req.body.code, req.body.email)
+        if (result) {
+            return res.sendStatus(201)
+        } else {
+            return res.sendStatus(400)
+        }
+    })
+
 authRouter.post('/registration', emailValidation, loginValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const email = await usersRepository.findByLoginOrEmail(req.body.email)
@@ -26,36 +47,19 @@ authRouter.post('/registration', emailValidation, loginValidation, inputValidati
         }
     })
 
-authRouter.post('/login',
-    async (req: Request, res: Response) => {
-        const user = await authService.checkCredentials(req.body.login, req.body.password)
-        if (user) {
-            const accessToken = await jwtService.createJWT(user)
-            return res.send({accessToken})
-        } else {
-            return res.sendStatus(401)
-        }
-    })
-
-authRouter.post('/confirm-email',
-    async (req: Request, res: Response) => {
-        const result = await authService.confirmEmail(req.body.code, req.body.email)
-        if (result) {
-            return res.sendStatus(201)
-        } else {
-            return res.sendStatus(400)
-        }
-    })
-
 authRouter.post('/registration-email-resending',
     async (req: Request, res: Response) => {
-  const result = await authService.resendConfirmationCode(req.body.email)
+        const result = await authService.resendConfirmationCode(req.body.email)
         if (result) {
-            return res.sendStatus(201)
+            return res.sendStatus(204)
         } else {
             return res.sendStatus(400)
         }
     })
+
+
+
+
 
 authRouter.get('/me', authJWTMiddleware,  (req: Request, res: Response) => {
     const user = req.user!
