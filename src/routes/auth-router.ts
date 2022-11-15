@@ -3,7 +3,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 import {authService} from "../domain/auth-service";
-import {emailValidation, loginValidation} from "../middlewares/validations";
+import {emailValidation, isCodeAlreadyConfirmed, loginValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {usersRepository} from "../repositories/users-repository";
 
@@ -22,7 +22,7 @@ authRouter.post('/login',
         }
     })
 
-authRouter.post('/registration-confirmation',
+authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed,
     async (req: Request, res: Response) => {
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
