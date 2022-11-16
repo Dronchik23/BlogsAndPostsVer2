@@ -1,6 +1,8 @@
 import {EmailConfirmationType} from "../types/types";
 import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
+import {emailService} from "./email-service";
+import {randomUUID} from "crypto";
 
 
 export const authService = {
@@ -37,10 +39,13 @@ export const authService = {
         let result = await usersRepository.updateConfirmation(user.id)
         return result
     },
-    async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean | string > {
+    async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean > {
         const user = await usersRepository.findByLoginOrEmail(email)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
-        return user.emailConfirmation.confirmationCode
+        const newCode = randomUUID()
+        await usersRepository.updateConfirmationCodeByUserId(user.id, newCode)
+        await emailService.resendingEmailMessage(user.accountData.email, newCode)
+        return true
     }
 }

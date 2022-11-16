@@ -5,16 +5,19 @@ export const emailService = {
     async sendEmail(email: any, subject: string, message: string) {
         await emailAdapter.sendEmail(email, subject, message)
     },
-    async sendEmailConfirmationMessage(user: UserDBType) {
+    async sendEmailRegistrationMessage(user: UserDBType) {
         const code = user.emailConfirmation.confirmationCode
         await emailAdapter.sendEmail(
             user.accountData.email, 'Confirm your email' ,
-            `<a 
-href='http://localhost:2000/auth/registration-confirmation?code=<${code}>'>complete registration</a>`
+            `<a href='https://blogsandposts.herokuapp.com/auth/registration-confirmation?code=${code}'>complete registration</a>`
         )
-    }
+    },
+    async resendingEmailMessage(email: string, code: string) {
+        await emailAdapter.sendEmail(
+            email, 'Its yours new confirmation code' ,
+            `<a href='https://blogsandposts.herokuapp.com/auth/registration-email-resending?code=${code}'>new confirmation code</a>`
+        )
+    },
 }
 
-
-  ///  <a href='${config.linkBase}/auth/confirm-email?code=${code}'>complete registration</a>
 

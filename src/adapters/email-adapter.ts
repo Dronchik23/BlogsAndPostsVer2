@@ -14,7 +14,7 @@ export const emailAdapter = {
             from: 'Drone <bonjorim@gmail.com>',
             to: email,
             subject: subject,
-            text: message
+            html: message
         })
         return info
     }

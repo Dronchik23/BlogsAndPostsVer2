@@ -48,7 +48,7 @@ export const usersService = {
         const result = await usersRepository.createUser(user)
 
         try {
-            await emailService.sendEmailConfirmationMessage(user)
+            await emailService.sendEmailRegistrationMessage(user)
         } catch (err) {
             console.error(err)
             await usersRepository.deleteUserById(user.id)

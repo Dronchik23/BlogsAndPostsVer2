@@ -34,11 +34,6 @@ authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed,
 
 authRouter.post('/registration', emailValidation, loginValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const email = await usersRepository.findByLoginOrEmail(req.body.email)
-        if (email) return res.sendStatus(400)
-        const login = await usersRepository.findByLoginOrEmail(req.body.login)
-        console.log(login)
-        if (login) return res.sendStatus(400)
         const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (user) {
            return res.status(204).json(user)
