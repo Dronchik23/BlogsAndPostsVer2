@@ -42,7 +42,7 @@ authRouter.post('/registration', emailValidation, loginValidation, passwordValid
     async (req: Request, res: Response) => {
     const email = await usersService.findUserByLoginOrEmail(req.body.email)
         if (email) {
-            return res.status(401).send({
+            return res.status(400).send({
                 "errorsMessages": [
                     {
                         "message": "E-mail already in use",
