@@ -33,7 +33,7 @@ export const emailValidation = body('email').trim().isLength({min:3, max:100}).i
     return true
 })
 export const isCodeAlreadyConfirmed = body('code').custom(async value => {
-    const isValidCode = await usersRepository.findUserByConfirmationCode(value)
-    if (isValidCode) throw new Error('Code is already confirmed')
+    const user = await usersRepository.findUserByConfirmationCode(value)
+    if (user?.emailConfirmation.isConfirmed) throw new Error('Code is already confirmed')
     return true
 })
