@@ -22,11 +22,11 @@ authRouter.post('/login',
         }
     })
 
-authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed,
+authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
-            return res.sendStatus(201)
+            return res.sendStatus(204)
         } else {
             return res.sendStatus(400)
         }
@@ -36,7 +36,7 @@ authRouter.post('/registration', emailValidation, loginValidation, inputValidati
     async (req: Request, res: Response) => {
         const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (user) {
-           return res.status(204).json(user)
+           return res.status(204).send(user)
         } else {
             return res.sendStatus(400)
         }

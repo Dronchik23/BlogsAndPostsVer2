@@ -32,8 +32,6 @@ export const authService = {
     async confirmEmail(code: string): Promise<boolean> {
         let user = await usersRepository.findUserByConfirmationCode(code)
         if (!user) return false
-        const isConfirmed = user.emailConfirmation.isConfirmed
-        if (user.emailConfirmation.isConfirmed) return isConfirmed
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
         let result = await usersRepository.updateConfirmation(user.id)
