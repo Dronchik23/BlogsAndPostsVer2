@@ -63,20 +63,14 @@ export const usersService = {
             return null
         }
     },
-    // async checkCredentials(loginOrEmail: string, password: string): Promise<UserDBType | boolean> {
-    //     const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-    //     if (!user) return false
-    //     const passwordHash = await this._generateHash(password, user.accountData.passwordHash)
-    //     if (user.passwordHash !== passwordHash) {
-    //         return false
-    //     }
-    //     return user
-    // },
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash
     },
     async deleteUserById(id: string) {
         return await usersRepository.deleteUserById(id)
+    },
+    async findUserByLoginOrEmail(email: string) {
+        return await usersRepository.findByLoginOrEmail(email)
     }
 }

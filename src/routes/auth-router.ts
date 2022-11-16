@@ -40,6 +40,17 @@ authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValida
 
 authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
+    const email = await usersService.findUserByLoginOrEmail(req.body.email)
+        if (email) {
+            return res.status(401).send({
+                "errorsMessages": [
+                    {
+                        "message": "E-mail already in use",
+                        "field": "email"
+                    }
+                ]
+            })
+        }
         const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (user) {
            return res.status(204).send(user)

@@ -20,11 +20,7 @@ export const loginValidation = body('login').isString().trim().notEmpty().isLeng
 })
 export const passwordValidation = body('password').trim().isLength({min:6, max:20}).isString()
 export const emailValidation = body('email').trim().isLength({min:3, max:100}).isString()
-    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).custom(async value => {
-    const isValidUser = await usersRepository.findByLoginOrEmail(value)
-    if (isValidUser) throw new Error('E-mail already in use')
-    return true
-})
+    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
 export const isCodeAlreadyConfirmed = body('code').custom(async value => {
     const user = await usersRepository.findUserByConfirmationCode(value)
     if (user?.emailConfirmation.isConfirmed) throw new Error('Code is already confirmed')
@@ -38,6 +34,6 @@ export const isEmailAlreadyConfirmed = body('email').custom(async value => {
 export const codeValidation = body('code').isString().trim().notEmpty().isUUID()
 export const isEmailExist = body('email').trim().custom(async value => {
         const isValidUser = await usersRepository.findByLoginOrEmail(value)
-        if (isValidUser) throw new Error('E-mail not exist')
+        if (!isValidUser) throw new Error('E-mail not exist')
         return true
 })
