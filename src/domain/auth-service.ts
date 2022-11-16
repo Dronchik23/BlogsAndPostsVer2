@@ -8,11 +8,12 @@ import {randomUUID} from "crypto";
 export const authService = {
     async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
         const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+        console.log(user)
         if (!user) return null
 
-        if (!user.emailConfirmation.isConfirmed) {
-            return null
-        }
+        // if (!user.emailConfirmation.isConfirmed) {
+        //     return null
+        // }
 
         const isHashIsEquals = await this._isPasswordCorrect(password, user.accountData.passwordHash)
         if (isHashIsEquals) {
@@ -21,10 +22,6 @@ export const authService = {
             return null
         }
     },
-    // async _generateHash(password: string, salt: string) {
-    //     const hash = await bcrypt.hash(password, salt)
-    //     return hash
-    // },
     async _isPasswordCorrect(password: string, hash: string) {
         const isEqual = await bcrypt.compare(password, hash)
         return isEqual

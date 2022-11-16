@@ -1,12 +1,5 @@
-import {body, param, CustomValidator} from "express-validator";
+import {body, param} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
-
-
-
-
-
-
-
 
 export const nameValidation = body('name').trim().isLength({min:1, max:15}).isString()
 export const youtubeUrlValidation = body('youtubeUrl').trim().isLength({min:0, max:100}).isString()
@@ -36,4 +29,15 @@ export const isCodeAlreadyConfirmed = body('code').custom(async value => {
     const user = await usersRepository.findUserByConfirmationCode(value)
     if (user?.emailConfirmation.isConfirmed) throw new Error('Code is already confirmed')
     return true
+})
+export const isEmailAlreadyConfirmed = body('email').custom(async value => {
+    const user = await usersRepository.findByLoginOrEmail(value)
+    if (user?.emailConfirmation.isConfirmed) throw new Error('E-mail is already confirmed')
+    return true
+})
+export const codeValidation = body('code').isString().trim().notEmpty().isUUID()
+export const isEmailExist = body('email').trim().custom(async value => {
+        const isValidUser = await usersRepository.findByLoginOrEmail(value)
+        if (isValidUser) throw new Error('E-mail not exist')
+        return true
 })

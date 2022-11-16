@@ -3,7 +3,13 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 import {authService} from "../domain/auth-service";
-import {emailValidation, isCodeAlreadyConfirmed, loginValidation} from "../middlewares/validations";
+import {
+    codeValidation,
+    emailValidation,
+    isCodeAlreadyConfirmed,
+    isEmailAlreadyConfirmed, isEmailExist,
+    loginValidation, passwordValidation
+} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {usersRepository} from "../repositories/users-repository";
 
@@ -22,7 +28,7 @@ authRouter.post('/login',
         }
     })
 
-authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, inputValidationMiddleware,
+authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
@@ -32,7 +38,7 @@ authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, inputValid
         }
     })
 
-authRouter.post('/registration', emailValidation, loginValidation, inputValidationMiddleware,
+authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (user) {
@@ -42,7 +48,8 @@ authRouter.post('/registration', emailValidation, loginValidation, inputValidati
         }
     })
 
-authRouter.post('/registration-email-resending',
+authRouter.post('/registration-email-resending', emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+    inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const result = await authService.resendConfirmationCode(req.body.email)
         if (result) {
