@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken'
 import {settings} from "./settings"
-import {UserType} from "../types/types"
+import {tokensRepository} from "../repositories/tokens-repository";
 
 
 export const jwtService = {
 
-    async createJWT(user: UserType) {
-        const token = jwt.sign({userId: user.id}, settings.JWT_SECRET, {expiresIn: '8h'})
+    async createJWT(userId: string) {
+        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '2m'})
+        const refreshToken = jwt.sign({userId}, settings.JWT_REFRESH_SECRET, {expiresIn: '2m'})
+        const token = {accessToken, refreshToken}
         return token
     },
     async getUserIdByToken(token: string) {
@@ -16,6 +18,20 @@ export const jwtService = {
         } catch (error) {
             return null
         }
+    },
+    async getUserIdByRefreshToken(refreshToken: string) {
+        try {
+            const result = jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET) as {userId: string}
+            return result.userId
+        } catch (error) {
+            return null
+        }
+    },
+    async addRefreshToBlackList (refreshToken: string){
+        return  tokensRepository.addRefreshToBlackList(refreshToken)
+    },
+    async findBannedToken(refreshToken: string) {
+        return  tokensRepository.findBannedToken(refreshToken)
     }
 }
 

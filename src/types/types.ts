@@ -2,6 +2,7 @@ import {ObjectId} from "mongodb"
 import {Request} from "express"
 import {BlogViewModel, CommentViewModel, PostViewModel, UserViewModel} from "../models/models";
 
+
 export type CommentType = {
     id: string
     content: string
@@ -61,15 +62,19 @@ export type EmailConfirmationType = {
     confirmationCode: string
     expirationDate: Date
 }
-export type SentEmailType = {
-    sentDate: Date
+export type TokenType = {
+    accessToken: string
+    refreshToken: string
+}
+
+export type TokenBlackListType = {
+    refreshToken: string
 }
 
 export type RequestWithBody<T> = Request<{}, {}, T>
 export type RequestWithQuery<T> = Request<{}, {}, {}, T>
 export type RequestWithParams<T> = Request<T>
 export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
-
 
 declare global {
     namespace Express {

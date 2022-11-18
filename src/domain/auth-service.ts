@@ -10,11 +10,6 @@ export const authService = {
         const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
         console.log(user)
         if (!user) return null
-
-        // if (!user.emailConfirmation.isConfirmed) {
-        //     return null
-        // }
-
         const isHashIsEquals = await this._isPasswordCorrect(password, user.accountData.passwordHash)
         if (isHashIsEquals) {
             return user

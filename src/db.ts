@@ -1,5 +1,5 @@
 import {MongoClient, ObjectId} from 'mongodb'
-import {BlogType, CommentType, PostType, UserDBType} from "./types/types";
+import {BlogType, CommentType, PostType, TokenBlackListType, UserDBType} from "./types/types";
 
 const mongoUri = "mongodb+srv://solikamsk:solikamsk@cluster0.uu9g6jj.mongodb.net/?retryWrites=true&w=majority"
 
@@ -10,6 +10,7 @@ export const blogsCollection = db.collection<BlogType>("blogs")
 export const postsCollection = db.collection<PostType>("posts")
 export const usersCollection = db.collection<UserDBType>("users")
 export const commentsCollection = db.collection<CommentType>("comments")
+export const tokensBlackListCollection = db.collection<TokenBlackListType>('tokensBlackList')
 
 
 export async function runDb() {

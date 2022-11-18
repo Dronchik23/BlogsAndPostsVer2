@@ -61,6 +61,7 @@ export const usersRepository = {
             $or: [{"accountData.email": loginOrEmail},
                 {"accountData.userName": loginOrEmail}]
         })
+        console.log(user, 'repo')
         return user
     },
     async findUserByConfirmationCode(code: string) {

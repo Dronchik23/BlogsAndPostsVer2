@@ -11,8 +11,8 @@ import {
     loginValidation, passwordValidation
 } from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {usersRepository} from "../repositories/users-repository";
-
+import {TokenType} from "../types/types";
+import {accessTokenMiddleware} from "../middlewares/access -token-middleware";
 
 
 export const authRouter = Router({})
@@ -21,8 +21,23 @@ authRouter.post('/login',
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.login, req.body.password)
         if (user) {
-            const accessToken = await jwtService.createJWT(user)
-            return res.send({accessToken})
+            const token: TokenType = await jwtService.createJWT(user.id)
+            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+            return res.send({accessToken: token.accessToken})
+        } else {
+            return res.sendStatus(401)
+        }
+    })
+
+authRouter.post('/refresh-token',
+    async (req: Request, res: Response) => {
+        console.dir(req.cookies)
+        const userId = await jwtService.getUserIdByRefreshToken(req.cookies.refreshToken)
+        console.log(userId)
+        if (userId) {
+            const token: TokenType = await jwtService.createJWT(userId)
+            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
+            return res.send({accessToken: token.accessToken})
         } else {
             return res.sendStatus(401)
         }
@@ -40,7 +55,7 @@ authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValida
 
 authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
     async (req: Request, res: Response) => {
-    const email = await usersService.findUserByLoginOrEmail(req.body.email)
+        const email = await usersService.findUserByLoginOrEmail(req.body.email)
         if (email) {
             return res.status(400).send({
                 "errorsMessages": [
@@ -53,7 +68,7 @@ authRouter.post('/registration', emailValidation, loginValidation, passwordValid
         }
         const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (user) {
-           return res.status(204).send(user)
+            return res.status(204).send(user)
         } else {
             return res.sendStatus(400)
         }
@@ -70,11 +85,7 @@ authRouter.post('/registration-email-resending', emailValidation, isEmailExist, 
         }
     })
 
-
-
-
-
-authRouter.get('/me', authJWTMiddleware,  (req: Request, res: Response) => {
+authRouter.get('/me', authJWTMiddleware, (req: Request, res: Response) => {
     const user = req.user!
     return res.send({
         login: user.login,
@@ -82,3 +93,10 @@ authRouter.get('/me', authJWTMiddleware,  (req: Request, res: Response) => {
         userId: user.id
     })
 })
+
+authRouter.post('/logout', accessTokenMiddleware,
+    async (req: Request, res: Response) => {
+        const refreshToken = req.cookies.refreshToken
+        await jwtService.addRefreshToBlackList(refreshToken)
+        return res.sendStatus(204)
+    })
