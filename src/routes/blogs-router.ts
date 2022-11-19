@@ -34,7 +34,7 @@ blogsRouter.post('/',
     basicAuthMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation,
     async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel>) => {
 
-    const newBlog = await blogsService.createBlog(req.body.name, req.body.youtubeUrl)
+    const newBlog = await blogsService.createBlog(req.body.name, req.body.description, req.body.youtubeUrl)
     return res.status(201).send(newBlog)
 
 })
@@ -97,7 +97,7 @@ blogsRouter.put('/:blogId', basicAuthMiddleware,
     inputValidationMiddleware, shortDescriptionValidation, paramsBlogIdValidation,
     async (req: RequestWithParamsAndBody<{blogId: string}, BlogUpdateModel>, res: Response) => {
 
-    const isUpdated = await blogsService.updateBlogById(req.params.blogId, req.body.name, req.body.youtubeUrl)
+    const isUpdated = await blogsService.updateBlogById(req.params.blogId, req.body.name, req.body.websiteUrl)
         if (isUpdated) {
             res.sendStatus(204)
         } else {

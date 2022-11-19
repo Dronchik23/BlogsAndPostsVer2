@@ -14,6 +14,7 @@ export type CommentType = {
 export type BlogType = {
     id: string
     name: string
+    description: string
     youtubeUrl: string
     createdAt: Date
 }

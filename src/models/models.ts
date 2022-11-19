@@ -1,10 +1,11 @@
 export type BlogCreateModel = {
     name: string
+    description: string
     youtubeUrl: string
 }
 export type BlogUpdateModel = {
     name: string
-    youtubeUrl: string
+    websiteUrl: string
 }
 export type BlogViewModel = {
     id: string
@@ -46,7 +47,7 @@ export type PostViewModel = {
     createdAt: Date
 }
 export type UserCreateModel = {
-    login: string
+    loginOrEmail: string
     email: string
     password: string
 }

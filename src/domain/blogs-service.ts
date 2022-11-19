@@ -20,10 +20,11 @@ export const blogsService = {
     async findBlogById(id: string): Promise<BlogType | null> {
         return blogsRepository.findBlogById(id)
     },
-    async createBlog(name: string, youtubeUrl: string): Promise<BlogType> {
+    async createBlog(name: string, description: string, youtubeUrl: string): Promise<BlogType> {
         const newBlog = {
             "id": (+(new Date())).toString(),
             "name": name,
+            "description": description,
             "youtubeUrl": youtubeUrl,
             "createdAt": new Date()
         }

@@ -36,7 +36,7 @@ usersRouter.post('/',
     queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation,
     inputValidationMiddleware, async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) => {
 
-    const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
+    const newUser = await usersService.createUser(req.body.loginOrEmail, req.body.email, req.body.password)
     res.status(201).send(newUser)
 })
 
