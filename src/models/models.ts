@@ -1,7 +1,7 @@
 export type BlogCreateModel = {
     name: string
     description: string
-    youtubeUrl: string
+    websiteUrl: string
 }
 export type BlogUpdateModel = {
     name: string
@@ -10,7 +10,8 @@ export type BlogUpdateModel = {
 export type BlogViewModel = {
     id: string
     name: string
-    youtubeUrl: string
+    description: string
+    websiteUrl: string
     createdAt: Date
 }
 

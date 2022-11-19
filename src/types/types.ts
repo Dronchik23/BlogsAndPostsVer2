@@ -15,7 +15,7 @@ export type BlogType = {
     id: string
     name: string
     description: string
-    youtubeUrl: string
+    websiteUrl: string
     createdAt: Date
 }
 export type PostType = {

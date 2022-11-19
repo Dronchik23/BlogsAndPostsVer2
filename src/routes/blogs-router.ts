@@ -34,7 +34,7 @@ blogsRouter.post('/',
     basicAuthMiddleware, nameValidation, youtubeUrlValidation, inputValidationMiddleware, shortDescriptionValidation,
     async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel>) => {
 
-    const newBlog = await blogsService.createBlog(req.body.name, req.body.description, req.body.youtubeUrl)
+    const newBlog = await blogsService.createBlog(req.body.name, req.body.description, req.body.websiteUrl)
     return res.status(201).send(newBlog)
 
 })

@@ -20,19 +20,19 @@ export const blogsService = {
     async findBlogById(id: string): Promise<BlogType | null> {
         return blogsRepository.findBlogById(id)
     },
-    async createBlog(name: string, description: string, youtubeUrl: string): Promise<BlogType> {
+    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
         const newBlog = {
             "id": (+(new Date())).toString(),
             "name": name,
             "description": description,
-            "youtubeUrl": youtubeUrl,
+            "websiteUrl": websiteUrl,
             "createdAt": new Date()
         }
         const createdBlog = await blogsRepository.createBlog(newBlog)
         return createdBlog
     },
-    async updateBlogById(id: string, name: string, youtubeUrl: string) {
-        return await blogsRepository.updateBlogById(id, name, youtubeUrl)
+    async updateBlogById(id: string, name: string, websiteUrl: string) {
+        return await blogsRepository.updateBlogById(id, name, websiteUrl)
     },
     async deleteBlogById(id: string) {
         return await blogsRepository.deleteBlogById(id)
