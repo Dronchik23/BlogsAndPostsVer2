@@ -2,7 +2,7 @@ import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {BlogType, PaginationType, PostType} from "../types/types";
 
-export const postsService = {
+class PostsService {
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number)
         : Promise<PaginationType> {
 
@@ -16,10 +16,10 @@ export const postsService = {
             totalCount: totalCount,
             items: allPosts
         }
-    },
+    }
     async findPostById(id: string): Promise<PostType | null> {
         return postsRepository.findPostById(id)
-    },
+    }
     async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string)
         : Promise<PostType | null> {
         const blog: BlogType | null = await blogsRepository.findBlogById(blogId)
@@ -45,15 +45,15 @@ export const postsService = {
             blogName: newPost.blogName,
             createdAt: newPost.createdAt
         }
-    },
+    }
     async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string)
         : Promise<PostType | boolean> {
 
         return await postsRepository.updatePostById(id, title, shortDescription, content, blogId)
-    },
+    }
     async deletePostById(id: string): Promise<PostType | boolean> {
-    return await postsRepository.deletePostById(id)
-    },
+        return await postsRepository.deletePostById(id)
+    }
     async findPostsByBlogId(blogId: string, pageNumber: any, pageSize: any, sortBy: any, sortDirection: any) {
 
         const foundPostsById = await postsRepository.findPostsByBlogId(blogId, pageNumber, pageSize, sortBy,
@@ -66,5 +66,7 @@ export const postsService = {
             totalCount: totalCount,
             items: foundPostsById
         }
-    },
+    }
 }
+
+export const postsService = new PostsService()

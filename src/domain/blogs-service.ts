@@ -1,8 +1,7 @@
 import {blogsRepository} from "../repositories/blogs-repository";
 import {BlogType, PaginationType} from "../types/types";
 
-
-export const blogsService = {
+class BlogsService {
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<PaginationType> {
 
@@ -16,27 +15,30 @@ export const blogsService = {
             totalCount: totalCount,
             items: allBlogs
         }
-    },
+    }
     async findBlogById(id: string): Promise<BlogType | null> {
         return blogsRepository.findBlogById(id)
-    },
+    }
     async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
-        const newBlog = {
-            "id": (+(new Date())).toString(),
-            "name": name,
-            "description": description,
-            "websiteUrl": websiteUrl,
-            "createdAt": new Date()
-        }
+        const newBlog = new BlogType(
+            (+(new Date())).toString(),
+            name,
+            description,
+            websiteUrl,
+            new Date()
+        )
+
         const createdBlog = await blogsRepository.createBlog(newBlog)
         return createdBlog
-    },
+    }
     async updateBlogById(id: string, name: string, websiteUrl: string) {
         return await blogsRepository.updateBlogById(id, name, websiteUrl)
-    },
+    }
     async deleteBlogById(id: string) {
         return await blogsRepository.deleteBlogById(id)
-    },
+    }
 }
+
+export const blogsService = new BlogsService()
 
 

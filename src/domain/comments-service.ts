@@ -5,8 +5,7 @@ import {postsService} from "./posts-service";
 import {blogsCollection} from "../db";
 import {promises} from "dns";
 
-
-export const commentsService = {
+class CommentsService {
     async createComment(postId: string, content: string, user: UserType): Promise<any> {
         const post: PostType | null = await postsRepository.findPostById(postId)
         if (!post) {
@@ -28,7 +27,7 @@ export const commentsService = {
             userLogin: newComment.userLogin,
             createdAt: newComment.createdAt
         }
-    },
+    }
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string,
                                sortDirection: string): Promise<any> {
 
@@ -42,20 +41,23 @@ export const commentsService = {
             totalCount: totalCount,
             items: foundComments
         }
-    },
-    async updateComment(commentId: string, content: string, user: UserType): Promise<any> {
+    }
+    async updateCommentByUserId(commentId: string, content: string, user: UserType): Promise<any> {
 
         return await commentsRepository.updateComment(commentId, content, user)
 
-    },
-    async findCommentById(commentId: string): Promise<any> {
+    }
+    async findCommentByCommentId(commentId: string): Promise<any> {
 
         const foundComment = await commentsRepository.findCommentById(commentId)
         return foundComment
-    },
-    async deleteCommentById(commentId: string, user: UserType) {
+    }
+    async deleteCommentByCommentId(commentId: string, user: UserType) {
 
         return await commentsRepository.deleteCommentById(commentId, user)
     }
 }
+
+export const commentsService = new CommentsService()
+
 

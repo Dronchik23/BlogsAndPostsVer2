@@ -3,8 +3,13 @@ import {emailService} from "../domain/email-service";
 
 export const emailRouter = Router({})
 
-emailRouter
-    .post('/send', async (req: Request, res: Response) => {
+class EmailController {
+    async sendEmail(req: Request, res: Response) {
         await emailService.sendEmail(req.body.email, req.body.subject, req.body.message)
-            res.sendStatus(204)
-})
+        res.sendStatus(204)
+    }
+}
+
+const emailController = new EmailController()
+
+emailRouter.post('/send', emailController.sendEmail)

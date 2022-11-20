@@ -2,7 +2,7 @@ import {usersCollection} from "../db";
 import {Filter} from "mongodb";
 import {UserDBType, UserType} from "../types/types";
 import {UserViewModel} from "../models/models";
-//
+
 type searchLoginOrEmailTermType = string | undefined
 
 const fromUserDBTypeToUserType = (user: UserDBType): UserViewModel => {
@@ -33,7 +33,7 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
     }
 }
 
-export const usersRepository = {
+export class UsersRepository {
     async getAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageSize: number,
                       sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {
 
@@ -43,11 +43,11 @@ export const usersRepository = {
 
         return fromUserDBTypeToUserTypeForArray(sortedUsers)
 
-    },
+    }
     async createUser(userForSave: UserDBType): Promise<UserType> {
         await usersCollection.insertOne(userForSave)
         return fromUserDBTypeToUserType(userForSave)
-    },
+    }
     async findUserById(id: string): Promise<UserViewModel | null> {
         let user = await usersCollection.findOne({id})
         if (user) {
@@ -55,7 +55,7 @@ export const usersRepository = {
         } else {
             return null
         }
-    },
+    }
     async findByLoginOrEmail(loginOrEmail: string) {
         const user = await usersCollection.findOne({
             $or: [{"accountData.email": loginOrEmail},
@@ -63,28 +63,31 @@ export const usersRepository = {
         })
         console.log(user, 'repo')
         return user
-    },
+    }
     async findUserByConfirmationCode(code: string) {
         const user = await usersCollection.findOne({"emailConfirmation.confirmationCode": code})
         return user
-    },
+    }
     async updateConfirmation(id: any) {
         let result = await usersCollection.updateOne({id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
-    },
+    }
     async getUsersCount(searchLoginTerm: searchLoginOrEmailTermType, searchEmailTerm: searchLoginOrEmailTermType) {
         const filter = searchLoginAndEmailTermFilter(searchLoginTerm, searchEmailTerm)
         return usersCollection.countDocuments(filter)
-    },
+    }
     async deleteUserById(id: string) {
         const result = await usersCollection.deleteOne({id: id})
         return result.deletedCount === 1
-    },
+    }
     async deleteAllUsers() {
         return usersCollection.deleteMany({})
-    },
+    }
     async updateConfirmationCodeByUserId(userId: string, newConfirmationCode: string) {
         let result = await usersCollection.updateOne({id: userId}, {$set: {'emailConfirmation.confirmationCode': newConfirmationCode}})
         return result.modifiedCount === 1
     }
 }
+
+export const usersRepository = new UsersRepository()
+

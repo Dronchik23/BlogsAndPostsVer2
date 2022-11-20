@@ -2,7 +2,7 @@ import {body, param} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
 
 export const nameValidation = body('name').trim().isLength({min:1, max:15}).isString()
-export const youtubeUrlValidation = body('youtubeUrl').trim().isLength({min:0, max:100}).isString()
+export const websiteUrlValidation = body('websiteUrl').trim().isLength({min:0, max:100}).isString()
     .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
 export const titleValidation = body('title').isString().trim().notEmpty().isLength({min:1, max:30})
 export const shortDescriptionValidation = body('shortDescription').trim().isLength({min:1, max:100})

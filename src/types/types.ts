@@ -1,8 +1,7 @@
 import {ObjectId} from "mongodb"
 import {Request} from "express"
 import {BlogViewModel, CommentViewModel, PostViewModel, UserViewModel} from "../models/models";
-
-
+// types
 export type CommentType = {
     id: string
     content: string
@@ -11,13 +10,13 @@ export type CommentType = {
     createdAt: Date
     postId: string
 }
-export type BlogType = {
-    id: string
-    name: string
-    description: string
-    websiteUrl: string
-    createdAt: Date
-}
+// export type BlogType = {
+//     id: string
+//     name: string
+//     description: string
+//     websiteUrl: string
+//     createdAt: Date
+// }
 export type PostType = {
     id: string
     title: string
@@ -67,9 +66,25 @@ export type TokenType = {
     accessToken: string
     refreshToken: string
 }
-
 export type TokenBlackListType = {
     refreshToken: string
+}
+// classes
+export class BlogDBType {
+    constructor(public _id: ObjectId,
+                public name: string,
+                public description: string,
+                public websiteUrl: string,
+                public createdAt: Date
+    ) {}
+}
+export class BlogType {
+    constructor(public id: string,
+                public name: string,
+                public description: string,
+                public websiteUrl: string,
+                public createdAt: Date
+    ) {}
 }
 
 export type RequestWithBody<T> = Request<{}, {}, T>
@@ -84,3 +99,4 @@ declare global {
         }
     }
 }
+

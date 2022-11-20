@@ -14,7 +14,7 @@ export const authJWTMiddleware = async (req: Request, res: Response, next: NextF
     const token = auth.split(' ')[1]
     const userId = await jwtService.getUserIdByToken(token)
     if (userId) {
-        req.user = await usersService.findUserById(userId)
+        req.user = await usersService.getUserByUserId(userId)
         return next()
     }
     return res.sendStatus(401)

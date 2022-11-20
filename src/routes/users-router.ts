@@ -10,8 +10,8 @@ import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../mode
 
 export const usersRouter = Router({})
 
-usersRouter.get('/', queryParamsMiddleware,
-    async (req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) => {
+class UsersController {
+    async getAllUsers(req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) {
 
         const {searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
 
@@ -19,34 +19,40 @@ usersRouter.get('/', queryParamsMiddleware,
             sortBy, sortDirection)
 
         return res.send(allUsers)
-    })
-
-usersRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Response<UserViewModel>) => {
-
-    const user = await usersService.findUserById(req.params.id)
-    if (user) {
-        return res.send(user)
-    } else {
-        res.sendStatus(404)
-        return;
     }
-})
 
-usersRouter.post('/',
-    queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation, emailValidation,
-    inputValidationMiddleware, async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) => {
-
-    const newUser = await usersService.createUser(req.body.loginOrEmail, req.body.email, req.body.password)
-    res.status(201).send(newUser)
-})
-
-usersRouter.delete('/:id', basicAuthMiddleware,
-    queryParamsMiddleware, async (req: RequestWithParams<{ id: string }>, res: Response) => {
-
-    const isDeleted = await usersService.deleteUserById(req.params.id)
-    if (isDeleted) {
-        res.sendStatus(204)
-    } else {
-        res.sendStatus(404)
+    async getUserByUserId(req: RequestWithParams<{ id: string }>, res: Response<UserViewModel>) {
+        const user = await usersService.getUserByUserId(req.params.id)
+        if (user) {
+            return res.send(user)
+        } else {
+            res.sendStatus(404)
+            return;
+        }
     }
-})
+
+    async createUser(req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) {
+        const newUser = await usersService.createUser(req.body.loginOrEmail, req.body.email, req.body.password)
+        res.status(201).send(newUser)
+    }
+
+    async deleteUserByUserId(req: RequestWithParams<{ id: string }>, res: Response) {
+        const isDeleted = await usersService.deleteUserByUserId(req.params.id)
+        if (isDeleted) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(404)
+        }
+    }
+}
+
+const usersController = new UsersController()
+
+usersRouter.get('/', queryParamsMiddleware, usersController.getAllUsers)
+
+usersRouter.get('/:id', usersController.getUserByUserId)
+
+usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation,
+    emailValidation, inputValidationMiddleware, usersController.createUser)
+
+usersRouter.delete('/:id', basicAuthMiddleware, queryParamsMiddleware, usersController.deleteUserByUserId)

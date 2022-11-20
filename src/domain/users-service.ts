@@ -7,8 +7,7 @@ import {add} from 'date-fns'
 import {UserViewModel} from "../models/models";
 import {emailService} from "./email-service";
 
-
-export const usersService = {
+class UsersService {
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageNumber: any,
                        pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationType> {
 
@@ -24,7 +23,7 @@ export const usersService = {
             totalCount: totalCount,
             items: allUsers
         }
-    },
+    }
     async createUser(login: string, email: string, password: string): Promise<UserType> {
 
         const passwordSalt = await bcrypt.genSalt(10)
@@ -54,23 +53,26 @@ export const usersService = {
             await usersRepository.deleteUserById(user.id)
         }
         return result
-    },
-    async findUserById(id: string): Promise<UserViewModel | null> {
+    }
+    async getUserByUserId(id: string): Promise<UserViewModel | null> {
         const user = await usersRepository.findUserById(id)
         if (user) {
             return user
         } else {
             return null
         }
-    },
+    }
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash
-    },
-    async deleteUserById(id: string) {
+    }
+    async deleteUserByUserId(id: string) {
         return await usersRepository.deleteUserById(id)
-    },
+    }
     async findUserByLoginOrEmail(email: string) {
         return await usersRepository.findByLoginOrEmail(email)
     }
 }
+
+export const usersService = new UsersService()
+
