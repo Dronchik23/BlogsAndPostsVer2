@@ -61,7 +61,7 @@ export class UsersRepository {
     async findByLoginOrEmail(loginOrEmail: string) {
         const user = await usersCollection.findOne({
             $or: [{"accountData.email": loginOrEmail},
-                {"accountData.userName": loginOrEmail}]
+                {"accountData.login": loginOrEmail}]
         })
         console.log(user, 'repo')
         return user
