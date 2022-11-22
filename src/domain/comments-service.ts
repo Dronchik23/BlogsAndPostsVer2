@@ -1,32 +1,25 @@
-import {CommentType, PaginationType, PostType, UserType} from "../types/types";
+import {CommentDBType} from "../types/types";
 import {postsRepository} from "../repositories/posts-repository";
 import {commentsRepository} from "../repositories/comments-repository";
-import {postsService} from "./posts-service";
-import {blogsCollection} from "../db";
-import {promises} from "dns";
+import {ObjectId} from "mongodb";
+import {CommentViewModel, PostViewModel, UserViewModel} from "../models/models";
 
 class CommentsService {
-    async createComment(postId: string, content: string, user: UserType): Promise<any> {
-        const post: PostType | null = await postsRepository.findPostById(postId)
+    async createComment(postId: string, content: string, user: UserViewModel): Promise<CommentViewModel | null> {
+        const post: PostViewModel | null = await postsRepository.findPostById(postId)
         if (!post) {
             return null
         }
-        const newComment = {
-            id: (+(new Date())).toString(),
-            content: content,
-            userId: user.id,
-            userLogin: user.login,
-            createdAt: new Date(),
-            postId: postId
-        }
-        await commentsRepository.createComment(newComment)
-        return {
-            id: newComment.id,
-            content: newComment.content,
-            userId: newComment.userId,
-            userLogin: newComment.userLogin,
-            createdAt: newComment.createdAt
-        }
+        const newComment = new CommentDBType(
+            new ObjectId,
+            content,
+            user.login,
+            user.createdAt,
+            postId
+        )
+        const createdComment =  await commentsRepository.createComment(newComment)
+        return createdComment
+
     }
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string,
                                sortDirection: string): Promise<any> {
@@ -42,7 +35,7 @@ class CommentsService {
             items: foundComments
         }
     }
-    async updateCommentByUserId(commentId: string, content: string, user: UserType): Promise<any> {
+    async updateCommentByUserId(commentId: string, content: string, user: UserViewModel): Promise<any> {
 
         return await commentsRepository.updateComment(commentId, content, user)
 
@@ -52,12 +45,13 @@ class CommentsService {
         const foundComment = await commentsRepository.findCommentById(commentId)
         return foundComment
     }
-    async deleteCommentByCommentId(commentId: string, user: UserType) {
+    async deleteCommentByCommentId(commentId: string, user: UserViewModel) {
 
         return await commentsRepository.deleteCommentById(commentId, user)
     }
 }
 
 export const commentsService = new CommentsService()
+
 
 

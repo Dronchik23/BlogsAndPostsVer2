@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {usersRepository} from "../repositories/users-repository";
-import {PaginationType, UserDBType, UserType} from "../types/types";
+import {AccountDataType, EmailConfirmationType, PaginationType, UserDBType} from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import {add} from 'date-fns'
 import {UserViewModel} from "../models/models";
@@ -24,38 +24,29 @@ class UsersService {
             items: allUsers
         }
     }
-    async createUser(login: string, email: string, password: string): Promise<UserType> {
-
+    async createUser(login: string, email: string, password: string): Promise<UserViewModel> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
-
-        const user: UserDBType = {
-            _id: new ObjectId(),
-            id: (+(new Date())).toString(),
-            accountData: {
-                userName: login,
-                email,
-                passwordHash,
-                createdAt: new Date()
-            },
-            emailConfirmation: {
-                confirmationCode: uuidv4(),
-                expirationDate: add(new Date(), {hours: 2, minutes: 3}),
-                isConfirmed: false,
-            }
-        }
+        const code = uuidv4()
+        const createdAt = new Date
+        const expirationDate = add(new Date(), {hours: 2, minutes: 3})
+        const user = new UserDBType (
+            new ObjectId(),
+            new AccountDataType(login, email, passwordHash, createdAt),
+            new EmailConfirmationType(code, expirationDate, false)
+        )
         const result = await usersRepository.createUser(user)
 
         try {
             await emailService.sendEmailRegistrationMessage(user)
         } catch (err) {
             console.error(err)
-            await usersRepository.deleteUserById(user.id)
+            //await usersRepository.deleteUserByUserId(id)
         }
         return result
     }
     async getUserByUserId(id: string): Promise<UserViewModel | null> {
-        const user = await usersRepository.findUserById(id)
+        const user = await usersRepository.findUserByUserId(id)
         if (user) {
             return user
         } else {
@@ -67,7 +58,7 @@ class UsersService {
         return hash
     }
     async deleteUserByUserId(id: string) {
-        return await usersRepository.deleteUserById(id)
+        return await usersRepository.deleteUserByUserId(id)
     }
     async findUserByLoginOrEmail(email: string) {
         return await usersRepository.findByLoginOrEmail(email)

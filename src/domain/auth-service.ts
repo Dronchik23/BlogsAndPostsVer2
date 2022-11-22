@@ -26,7 +26,7 @@ export const authService = {
         if (!user) return false
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
-        let result = await usersRepository.updateConfirmation(user.id)
+        let result = await usersRepository.updateConfirmation(user._id)
         return result
     },
     async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean > {
@@ -34,7 +34,7 @@ export const authService = {
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
         const newCode = randomUUID()
-        await usersRepository.updateConfirmationCodeByUserId(user.id, newCode)
+        await usersRepository.updateConfirmationCodeByUserId(user._id, newCode)
         await emailService.resendingEmailMessage(user.accountData.email, newCode)
         return true
     }

@@ -1,31 +1,55 @@
 import {blogsCollection} from "../db"
-import {BlogType} from "../types/types";
-import {Filter} from "mongodb";
-import {BlogViewModel} from "../models/models";
+import {BlogDBType, UserDBType} from "../types/types";
+import {Filter, ObjectId} from "mongodb";
+import {BlogViewModel, UserViewModel} from "../models/models";
 
-const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogType> => {
+
+const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogDBType> => {
     return {name: {$regex: searchNameTerm ? searchNameTerm : '', $options:'i'}}
+}
+
+const fromBlogDBTypeBlogViewModel = (blog: BlogDBType): BlogViewModel => {
+    return {
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt
+    }
+}
+
+const fromBlogDBTypeBlogViewModelWithPagination = (blogs: BlogDBType[]): BlogViewModel[] => {
+    return blogs.map(blog => ({
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt
+    }))
 }
 
 export class BlogsRepository {
     async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<BlogViewModel[]> {
         const filter = searchNameTermFilter(searchNameTerm)
-        const sortedBlogs = blogsCollection.find(filter, {projection: {_id: 0}})
+        const sortedBlogs = await blogsCollection.find(filter)
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
             .toArray()
-        return sortedBlogs
+        return  fromBlogDBTypeBlogViewModelWithPagination(sortedBlogs)
     }
-    async findBlogById(id: string): Promise<BlogType | null> {
-        let blog: BlogType | null = await blogsCollection.findOne({id: id}, {projection: {_id: 0}})
-        return blog
+    async findBlogByBlogId(id: string): Promise<BlogViewModel | null> {
+        let blog = await blogsCollection.findOne({id})
+        if (blog) {
+            return fromBlogDBTypeBlogViewModel(blog)
+        } else {
+            return null
+        }
     }
-    async createBlog(newBlog: BlogType): Promise<BlogType> {
-        const {id, name, description, websiteUrl, createdAt} = newBlog
-        await blogsCollection.insertOne({id, name, description, websiteUrl, createdAt})
-        return newBlog
+    async createBlog(blogForSave: BlogDBType): Promise<BlogViewModel> {
+        await blogsCollection.insertOne(blogForSave)
+        return fromBlogDBTypeBlogViewModel(blogForSave)
     }
     async updateBlogById(id: string, name: string, youtubeUrl: string) {
         const result = await blogsCollection.updateMany({id: id}, {
@@ -36,7 +60,7 @@ export class BlogsRepository {
         })
         return result.matchedCount === 1
     }
-    async deleteBlogById(id: string) {
+    async deleteBlogByBlogId(id: string) {
         const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     }

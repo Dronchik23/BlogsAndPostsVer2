@@ -1,36 +1,62 @@
 import {postsCollection} from "../db";
 import {Filter} from "mongodb";
-import {PostType} from "../types/types";
+import {BlogDBType, PostDBType, UserDBType} from "../types/types";
+import {BlogViewModel, PostViewModel, UserViewModel} from "../models/models";
+
+
+const fromPostDBTypePostViewModel = (post: PostDBType): PostViewModel => {
+    return {
+        id: post._id.toString(),
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt
+    }
+}
+
+const fromPostDBTypeToPostViewModelWithPagination = (posts: PostDBType[]): PostViewModel[] => {
+    return posts.map(post => ({
+            id: post._id.toString(),
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt
+        })
+    )
+}
 
 export class PostsRepository {
-    async findAllPosts(pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<PostType[]> {
-        return await postsCollection
-            .find({}, {projection: {_id: 0}})
+    async findAllPosts(pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<PostViewModel[]> {
+       const allPosts = await postsCollection
+            .find({})
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
-            .toArray();
-    }
-    async findPostById(id: string): Promise<PostType | null> {
-        const post = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
-        return post
-    }
-    async createPost(newPost: PostType): Promise<PostType | null> {
+            .toArray()
 
-        const {id, title, shortDescription, content, blogId, blogName, createdAt} = newPost
-        const result = await postsCollection.insertOne({
-            id,
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName,
-            createdAt
-        })
-        return newPost;
+        return fromPostDBTypeToPostViewModelWithPagination(allPosts)
     }
+
+    async findPostById(id: string): Promise<PostViewModel | null> {
+        const post = await postsCollection.findOne({id})
+        if (post) {
+            return fromPostDBTypePostViewModel(post)
+        } else {
+            return null
+        }
+    }
+
+    async createPost(postForSave: PostDBType): Promise<PostViewModel> {
+        await postsCollection.insertOne(postForSave)
+        return fromPostDBTypePostViewModel(postForSave);
+    }
+
     async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string)
-        : Promise<PostType | boolean> {
+        : Promise<PostViewModel | boolean> {
 
         const result = await postsCollection.updateOne({id: id}, {
             $set: {
@@ -42,21 +68,24 @@ export class PostsRepository {
         })
         return result.matchedCount === 1
     }
-    async deletePostById(id: string): Promise<PostType | boolean> {
+
+    async deletePostById(id: string): Promise<PostViewModel | boolean> {
         const result = await postsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     }
-    async findPostsByBlogId(blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string)
-    {
+
+    async findPostsByBlogId(blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string) {
         return await postsCollection.find({blogId: blogId}, {projection: {_id: 0}})
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
             .toArray()
     }
-    async getPostsCount(filter: Filter<PostType>) {
+
+    async getPostsCount(filter: Filter<PostDBType>) {
         return postsCollection.countDocuments(filter)
     }
+
     async deleteAllPosts() {
         return postsCollection.deleteMany({})
     }

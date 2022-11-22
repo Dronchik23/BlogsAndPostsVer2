@@ -14,7 +14,6 @@ export type BlogViewModel = {
     websiteUrl: string
     createdAt: Date
 }
-
 export type PaginationInputQueryModel = {
     searchLoginTerm?: string
     searchEmailTerm?: string
@@ -24,7 +23,6 @@ export type PaginationInputQueryModel = {
     sortBy: string
     sortDirection: string
 }
-
 export type PostCreateModel = {
     title: string
     shortDescription: string
@@ -58,11 +56,9 @@ export type UserViewModel = {
     email: string
     createdAt: Date
 }
-
 export type CommentCreateModel = {
     content: string
 }
-
 export type CommentViewModel = {
     id: string
     content: string

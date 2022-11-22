@@ -1,11 +1,12 @@
 import {postsRepository} from "../repositories/posts-repository";
 import {blogsRepository} from "../repositories/blogs-repository";
-import {BlogType, PaginationType, PostType} from "../types/types";
+import {PaginationType, PostDBType} from "../types/types";
+import {BlogViewModel, PostViewModel} from "../models/models";
+import {ObjectId} from "mongodb";
 
 class PostsService {
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number)
         : Promise<PaginationType> {
-
         const allPosts = await postsRepository.findAllPosts(pageSize, sortBy, sortDirection, pageNumber)
         const totalCount = await postsRepository.getPostsCount({})
         const pagesCount = Math.ceil(totalCount / pageSize)
@@ -17,41 +18,34 @@ class PostsService {
             items: allPosts
         }
     }
-    async findPostById(id: string): Promise<PostType | null> {
+    async findPostById(id: string): Promise<PostViewModel | null> {
         return postsRepository.findPostById(id)
     }
     async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string)
-        : Promise<PostType | null> {
-        const blog: BlogType | null = await blogsRepository.findBlogById(blogId)
+        : Promise<PostViewModel | null> {
+        const blog: BlogViewModel | null = await blogsRepository.findBlogByBlogId(blogId)
         if (!blog) {
             return null
         }
-        const newPost = {
-            "id": (+(new Date())).toString(),
-            "title": title,
-            "shortDescription": shortDescription,
-            "content": content,
-            "blogId": blogId,
-            "blogName": blog.name,
-            "createdAt": new Date()
-        }
-        await postsRepository.createPost(newPost)
-        return {
-            id: newPost.id,
-            title: newPost.title,
-            shortDescription: newPost.shortDescription,
-            content: newPost.content,
-            blogId: newPost.blogId,
-            blogName: newPost.blogName,
-            createdAt: newPost.createdAt
-        }
+        const newPost = new PostDBType(
+            new ObjectId,
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName,
+            new Date()
+    )
+        const createdPost = await postsRepository.createPost(newPost)
+        return createdPost
+
     }
     async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string)
-        : Promise<PostType | boolean> {
+        : Promise<PostViewModel | boolean> {
 
         return await postsRepository.updatePostById(id, title, shortDescription, content, blogId)
     }
-    async deletePostById(id: string): Promise<PostType | boolean> {
+    async deletePostById(id: string): Promise<PostViewModel | boolean> {
         return await postsRepository.deletePostById(id)
     }
     async findPostsByBlogId(blogId: string, pageNumber: any, pageSize: any, sortBy: any, sortDirection: any) {

@@ -1,27 +1,22 @@
 import {commentsCollection, postsCollection} from "../db";
-import {CommentType, PostType, UserType} from "../types/types";
+import {CommentDBType} from "../types/types";
 import {Filter} from "mongodb";
+import {CommentViewModel, UserViewModel} from "../models/models";
+
+const fromCommentDBTypeToCommentViewModel = (comment: CommentDBType): CommentViewModel => {
+    return {
+        id: comment._id.toString(),
+        content: comment.content,
+        userId: comment.userId,
+        userLogin: comment.userId,
+        createdAt: comment.createdAt
+    }
+}
 
 class CommentsRepository {
-    async createComment(newComment: any) {
-        // const {id, content, userId, userLogin, createdAt, postId} = newComment
-        // await commentsCollection.insertOne({
-        //     id,
-        //     content,
-        //     userId,
-        //     userLogin,
-        //     createdAt,
-        //     postId
-        // })
-        await commentsCollection.insertOne({...newComment})
-        // return {
-        //     id: id,
-        //     content: content,
-        //     userId: userId,
-        //     userLogin: userLogin,
-        //     createdAt: createdAt
-        // }
-        return newComment
+    async createComment(commentForSave: CommentDBType): Promise<CommentViewModel> {
+        await commentsCollection.insertOne(commentForSave)
+        return fromCommentDBTypeToCommentViewModel(commentForSave)
     }
     async findCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: string): Promise<any> {
 
@@ -34,7 +29,7 @@ class CommentsRepository {
 
 
     }
-    async updateComment(commentId: string, content: string, user: UserType) {
+    async updateComment(commentId: string, content: string, user: UserViewModel) {
         const result = await commentsCollection.updateOne({id: commentId, userId: user.id}, {
             $set: {
                 content: content
@@ -45,10 +40,10 @@ class CommentsRepository {
     async findCommentById(commentId: string) {
         return await commentsCollection.findOne({id: commentId}, {projection: {_id: 0, postId: 0}})
     }
-    async getPostsCount(filter: Filter<CommentType>) {
+    async getPostsCount(filter: Filter<CommentDBType>) {
         return await commentsCollection.countDocuments(filter)
     }
-    async deleteCommentById(commentId: string, user: UserType) {
+    async deleteCommentById(commentId: string, user: UserViewModel) {
         const result =  await commentsCollection.deleteOne({id: commentId, userId: user.id})
         return result.deletedCount === 1
     }

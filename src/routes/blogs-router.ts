@@ -89,8 +89,8 @@ class BlogsController {
         }
     }
 
-    async deleteBlogById(req: RequestWithParams<{ blogId: string }>, res: Response) {
-        const isDeleted = await blogsService.deleteBlogById(req.params.blogId)
+    async deleteBlogByBlogId(req: RequestWithParams<{ blogId: string }>, res: Response) {
+        const isDeleted = await blogsService.deleteBlogByBlogId(req.params.blogId)
         if (isDeleted) {
             res.sendStatus(204)
         } else {
@@ -118,4 +118,4 @@ blogsRouter.get('/:id', blogsController.getBlogById)
 blogsRouter.put('/:blogId', basicAuthMiddleware, nameValidation, websiteUrlValidation, inputValidationMiddleware,
     shortDescriptionValidation, paramsBlogIdValidation, blogsController.updateBlogById)
 
-blogsRouter.delete('/:blogId', basicAuthMiddleware, blogsController.deleteBlogById)
+blogsRouter.delete('/:blogId', basicAuthMiddleware, blogsController.deleteBlogByBlogId)

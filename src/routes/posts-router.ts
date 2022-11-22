@@ -14,7 +14,6 @@ import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
 import {
     ErrorType,
     PaginationType,
-    PostType,
     RequestWithBody,
     RequestWithParams,
     RequestWithParamsAndBody,

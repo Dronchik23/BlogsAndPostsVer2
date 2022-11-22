@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express";
+import {Response, Router} from "express";
 import {usersService} from "../domain/users-service";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
@@ -6,6 +6,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 import {PaginationType, RequestWithBody, RequestWithParams, RequestWithQuery} from "../types/types";
 import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../models/models";
+import {ObjectId} from "mongodb";
 
 
 export const usersRouter = Router({})
@@ -36,8 +37,8 @@ class UsersController {
         res.status(201).send(newUser)
     }
 
-    async deleteUserByUserId(req: RequestWithParams<{ id: string }>, res: Response) {
-        const isDeleted = await usersService.deleteUserByUserId(req.params.id)
+    async deleteUserByUserId(req: RequestWithParams<{ userId: string }>, res: Response) {
+        const isDeleted = await usersService.deleteUserByUserId(req.params.userId)
         if (isDeleted) {
             res.sendStatus(204)
         } else {

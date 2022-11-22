@@ -5,7 +5,7 @@ import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middlew
 import {contentValidation, contentValidationForComment} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
-const commentsRouter = Router({})
+export const commentsRouter = Router({})
 
 class CommentsController {
     async updateCommentByUserId(req: Request, res: Response) {

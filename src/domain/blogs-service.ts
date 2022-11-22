@@ -1,10 +1,11 @@
 import {blogsRepository} from "../repositories/blogs-repository";
-import {BlogType, PaginationType} from "../types/types";
+import {BlogDBType, PaginationType} from "../types/types";
+import {ObjectId} from "mongodb";
+import {BlogViewModel} from "../models/models";
 
 class BlogsService {
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<PaginationType> {
-
         const allBlogs = await blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
         const totalCount = await blogsRepository.getBlogsCount(searchNameTerm)
         const pagesCount = Math.ceil(totalCount / pageSize)
@@ -16,12 +17,12 @@ class BlogsService {
             items: allBlogs
         }
     }
-    async findBlogById(id: string): Promise<BlogType | null> {
-        return blogsRepository.findBlogById(id)
+    async findBlogById(id: string): Promise<BlogViewModel | null> {
+        return blogsRepository.findBlogByBlogId(id)
     }
-    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
-        const newBlog = new BlogType(
-            (+(new Date())).toString(),
+    async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
+        const newBlog = new BlogDBType(
+            new ObjectId,
             name,
             description,
             websiteUrl,
@@ -34,8 +35,8 @@ class BlogsService {
     async updateBlogById(id: string, name: string, websiteUrl: string) {
         return await blogsRepository.updateBlogById(id, name, websiteUrl)
     }
-    async deleteBlogById(id: string) {
-        return await blogsRepository.deleteBlogById(id)
+    async deleteBlogByBlogId(id: string) {
+        return await blogsRepository.deleteBlogByBlogId(id)
     }
 }
 
