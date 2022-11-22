@@ -41,7 +41,6 @@ class UsersService {
             await emailService.sendEmailRegistrationMessage(user)
         } catch (err) {
             console.error(err)
-            //await usersRepository.deleteUserByUserId(id)
         }
         return result
     }

@@ -19,7 +19,7 @@ export const authRouter = Router({})
 
 authRouter.post('/login',
     async (req: Request, res: Response) => {
-        const user = await authService.checkCredentials(req.body.login, req.body.password)
+        const user = await authService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token: TokenType = await jwtService.createJWT(user.id)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
@@ -31,9 +31,7 @@ authRouter.post('/login',
 
 authRouter.post('/refresh-token',
     async (req: Request, res: Response) => {
-        console.dir(req.cookies)
         const userId = await jwtService.getUserIdByRefreshToken(req.cookies.refreshToken)
-        console.log(userId)
         if (userId) {
             const token: TokenType = await jwtService.createJWT(userId)
             res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})

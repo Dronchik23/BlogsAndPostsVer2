@@ -8,7 +8,7 @@ import {randomUUID} from "crypto";
 export const authService = {
     async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
         const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
-        console.log(user)
+        console.log(user, 'user in service')
         if (!user) return null
         const isHashIsEquals = await this._isPasswordCorrect(password, user.accountData.passwordHash)
         if (isHashIsEquals) {
