@@ -46,7 +46,7 @@ export type PostViewModel = {
     createdAt: Date
 }
 export type UserCreateModel = {
-    loginOrEmail: string
+    login: string
     email: string
     password: string
 }

@@ -56,7 +56,7 @@ export class CommentDBType {
 }
 
 export class AccountDataType {
-    constructor(public userName: string,
+    constructor(public login: string,
                 public email: string,
                 public passwordHash: string,
                 public createdAt: Date

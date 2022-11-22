@@ -8,7 +8,7 @@ type searchLoginOrEmailTermType = string | undefined
 const fromUserDBTypeToUserViewModel = (user: UserDBType): UserViewModel => {
     return {
         id: user._id.toString(),
-        login: user.accountData.userName,
+        login: user.accountData.login,
         email: user.accountData.email,
         createdAt: user.accountData.createdAt
     }
@@ -17,7 +17,7 @@ const fromUserDBTypeToUserViewModel = (user: UserDBType): UserViewModel => {
 const fromUserDBTypeToUserViewModelWithPagination = (users: UserDBType[]): UserViewModel[] => {
     return users.map(user => ({
         id: user._id.toString(),
-        login: user.accountData.userName,
+        login: user.accountData.login,
         email: user.accountData.email,
         createdAt: user.accountData.createdAt
     }))

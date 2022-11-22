@@ -6,7 +6,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 import {PaginationType, RequestWithBody, RequestWithParams, RequestWithQuery} from "../types/types";
 import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../models/models";
-import {ObjectId} from "mongodb";
+
 
 
 export const usersRouter = Router({})
@@ -33,7 +33,7 @@ class UsersController {
     }
 
     async createUser(req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel>) {
-        const newUser = await usersService.createUser(req.body.loginOrEmail, req.body.email, req.body.password)
+        const newUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
         res.status(201).send(newUser)
     }
 
