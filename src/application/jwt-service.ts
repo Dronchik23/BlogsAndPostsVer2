@@ -5,8 +5,9 @@ import {tokensRepository} from "../repositories/tokens-repository";
 
 export const jwtService = {
     async createJWT(userId: string) {
-        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '10s'})
-        const refreshToken = jwt.sign({userId}, settings.JWT_REFRESH_SECRET, {expiresIn: '20s'})
+        console.log(userId, 'createJwt')
+        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '1000s'})
+        const refreshToken = jwt.sign({userId}, settings.JWT_REFRESH_SECRET, {expiresIn: '2000s'})
         const token = {accessToken, refreshToken}
         return token
     },
@@ -20,7 +21,8 @@ export const jwtService = {
     },
     async getUserIdByRefreshToken(refreshToken: string) {
         try {
-            const result = jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET) as {userId: string}
+            const result: any = jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET)
+            console.log(result, 'res')
             return result.userId
         } catch (error) {
             return null

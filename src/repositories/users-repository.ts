@@ -51,7 +51,7 @@ export class UsersRepository {
         return fromUserDBTypeToUserViewModel(userForSave)
     }
     async findUserByUserId(id: string): Promise<UserViewModel | null> {
-        let user = await usersCollection.findOne({id})
+        let user = await usersCollection.findOne({_id: new ObjectId(id)})
         if (user) {
             return fromUserDBTypeToUserViewModel(user)
         } else {

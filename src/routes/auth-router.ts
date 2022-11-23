@@ -21,11 +21,10 @@ authRouter.post('/login',
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
-            const token: TokenType = await jwtService.createJWT(user.id)
+            const token: TokenType = await jwtService.createJWT((user._id).toString())
             res.cookie('refreshToken', token.refreshToken, {
-                httpOnly: true,
-                secure: true,
-                expires: new Date(Date.now() + 20000)
+                // httpOnly: true,
+                // secure: true,
             })
             return res.send({accessToken: token.accessToken})
         } else {
@@ -33,24 +32,24 @@ authRouter.post('/login',
         }
     })
 
-authRouter.post('/refresh-token',
+authRouter.post('/refresh-token', refreshTokenMiddleware,
     async (req: Request, res: Response) => {
-        const accessToken = req.body.accessToken
-        if (!accessToken) {
-            res.sendStatus(401)
-            return
-        }
-        const userId = await jwtService.getUserIdByToken(accessToken)
-        if (!userId) return res.sendStatus(401)
-        const user = await usersService.getUserByUserId(userId)
-        if (!user) return res.sendStatus(401)
+        // const accessToken = req.body.accessToken
+        // if (!accessToken) {
+        //     res.sendStatus(401)
+        //     return
+        // }
+        // const userId = await jwtService.getUserIdByToken(accessToken)
+        // if (!userId) return res.sendStatus(401)
+        // const user = await usersService.getUserByUserId(userId)
+        // if (!user) return res.sendStatus(401)
+        const userId = req.userId!
         const token: TokenType = await jwtService.createJWT(userId)
         return res
             .status(200)
             .cookie('refreshToken', token.refreshToken, {
-                httpOnly: true,
-                secure: true,
-                expires: new Date(Date.now() + 20000)
+                // httpOnly: true,
+                // secure: true,
             })
             .send({accessToken: token.accessToken})
 
