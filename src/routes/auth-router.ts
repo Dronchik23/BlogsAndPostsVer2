@@ -33,9 +33,17 @@ authRouter.post('/login',
         }
     })
 
-authRouter.post('/refresh-token', authJWTMiddleware,
+authRouter.post('/refresh-token',
     async (req: Request, res: Response) => {
-        const userId = req.user!.id
+        const accessToken = req.body.accessToken
+        if (!accessToken) {
+            res.sendStatus(401)
+            return
+        }
+        const userId = await jwtService.getUserIdByToken(accessToken)
+        if (!userId) return res.sendStatus(401)
+        const user = await usersService.getUserByUserId(userId)
+        if (!user) return res.sendStatus(401)
         const token: TokenType = await jwtService.createJWT(userId)
         return res
             .status(200)
