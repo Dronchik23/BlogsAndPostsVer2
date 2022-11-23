@@ -40,6 +40,8 @@ authRouter.post('/refresh-token',
         if (!userId) return res.sendStatus(401)
         const user = await usersService.getUserByUserId(userId)
         if (!user) return res.sendStatus(401)
+        await jwtService.addRefreshToBlackList(refreshToken)
+
 
         const token: TokenType = await jwtService.createJWT(userId)
         res.cookie('refreshToken', token.refreshToken,
