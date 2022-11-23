@@ -2,12 +2,12 @@ import express from 'express'
 import {runDb} from "./db"
 import {blogsRouter} from "./routes/blogs-router"
 import {postsRouter} from "./routes/posts-router"
-import {usersRouter} from "./routes/users-router";
-import {authRouter} from "./routes/auth-router";
-import {testingRouter} from "./routes/testing-router";
-import {commentsRouter} from "./routes/comments-router";
-import {emailRouter} from "./routes/email-router";
-import cookieParser from "cookie-parser";
+import {usersRouter} from "./routes/users-router"
+import {authRouter} from "./routes/auth-router"
+import {testingRouter} from "./routes/testing-router"
+import {commentsRouter} from "./routes/comments-router"
+import {emailRouter} from "./routes/email-router"
+import cookieParser from "cookie-parser"
 
 export const app = express()
 

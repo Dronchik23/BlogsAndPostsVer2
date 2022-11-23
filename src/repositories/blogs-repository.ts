@@ -1,7 +1,7 @@
 import {blogsCollection} from "../db"
-import {BlogDBType, UserDBType} from "../types/types";
-import {Filter, ObjectId} from "mongodb";
-import {BlogViewModel, UserViewModel} from "../models/models";
+import {BlogDBType} from "../types/types";
+import {Filter} from "mongodb";
+import {BlogViewModel} from "../models/models";
 
 
 const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogDBType> => {

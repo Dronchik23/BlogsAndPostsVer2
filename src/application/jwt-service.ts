@@ -32,6 +32,6 @@ export const jwtService = {
     },
     async findBannedToken(refreshToken: string) {
         return  tokensRepository.findBannedToken(refreshToken)
-    }
+    },
 }
 

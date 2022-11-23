@@ -31,14 +31,22 @@ authRouter.post('/login',
 
 authRouter.post('/refresh-token',
     async (req: Request, res: Response) => {
-        const userId = await jwtService.getUserIdByRefreshToken(req.cookies.refreshToken)
-        if (userId) {
-            const token: TokenType = await jwtService.createJWT(userId)
-            res.cookie('refreshToken', token.refreshToken, {httpOnly: true, secure: true})
-            return res.send({accessToken: token.accessToken})
-        } else {
-            return res.sendStatus(401)
-        }
+
+        const refreshToken = req.cookies.refreshToken
+        if (!refreshToken) return res.sendStatus(401)
+        const isBanned = await jwtService.findBannedToken(refreshToken)
+        if (isBanned) return res.sendStatus(401)
+        const userId = await jwtService.getUserIdByRefreshToken(refreshToken)
+        if (!userId) return res.sendStatus(401)
+        const user = await usersService.getUserByUserId(userId)
+        if (!user) return res.sendStatus(401)
+
+        const token: TokenType = await jwtService.createJWT(userId)
+        res.cookie('refreshToken', token.refreshToken,
+            {httpOnly: true, secure: true}
+        )
+        return res.send({accessToken: token.accessToken})
+
     })
 
 authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware,
