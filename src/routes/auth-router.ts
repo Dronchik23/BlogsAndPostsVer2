@@ -23,8 +23,8 @@ authRouter.post('/login',
         if (user) {
             const token: TokenType = await jwtService.createJWT((user._id).toString())
             res.cookie('refreshToken', token.refreshToken, {
-                // httpOnly: true,
-                // secure: true,
+                httpOnly: true,
+                secure: true,
             })
             return res.send({accessToken: token.accessToken})
         } else {
@@ -48,8 +48,8 @@ authRouter.post('/refresh-token', refreshTokenMiddleware,
         return res
             .status(200)
             .cookie('refreshToken', token.refreshToken, {
-                // httpOnly: true,
-                // secure: true,
+                httpOnly: true,
+                secure: true,
             })
             .send({accessToken: token.accessToken})
 
