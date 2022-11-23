@@ -6,8 +6,8 @@ import {tokensRepository} from "../repositories/tokens-repository";
 export const jwtService = {
 
     async createJWT(userId: string) {
-        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '2m'})
-        const refreshToken = jwt.sign({userId}, settings.JWT_REFRESH_SECRET, {expiresIn: '2m'})
+        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const refreshToken = jwt.sign({userId}, settings.JWT_REFRESH_SECRET, {expiresIn: '20s'})
         const token = {accessToken, refreshToken}
         return token
     },
