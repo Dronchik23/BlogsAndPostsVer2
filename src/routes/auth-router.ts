@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authJWTMiddleware} from "../middlewares/bearer-auth-miidleware";
-import {authService} from "../domain/auth-service";
+import {AuthService} from "../domain/auth-service";
 import {
     codeValidation,
     emailValidation,
@@ -17,9 +17,15 @@ import {refreshTokenMiddleware} from "../middlewares/refresh-token-middleware";
 
 export const authRouter = Router({})
 
-authRouter.post('/login',
-    async (req: Request, res: Response) => {
-        const user = await authService.checkCredentials(req.body.loginOrEmail, req.body.password)
+class AuthController {
+    private authService: AuthService
+
+    constructor() {
+        this.authService = new AuthService()
+    }
+
+    async login(req: Request, res: Response) {
+        const user = await this.authService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token: TokenType = await jwtService.createJWT((user._id).toString())
             res.cookie('refreshToken', token.refreshToken, {
@@ -30,19 +36,9 @@ authRouter.post('/login',
         } else {
             return res.sendStatus(401)
         }
-    })
+    }
 
-authRouter.post('/refresh-token', refreshTokenMiddleware,
-    async (req: Request, res: Response) => {
-        // const accessToken = req.body.accessToken
-        // if (!accessToken) {
-        //     res.sendStatus(401)
-        //     return
-        // }
-        // const userId = await jwtService.getUserIdByToken(accessToken)
-        // if (!userId) return res.sendStatus(401)
-        // const user = await usersService.getUserByUserId(userId)
-        // if (!user) return res.sendStatus(401)
+    async refreshToken(req: Request, res: Response) {
         const userId = req.userId!
         const token: TokenType = await jwtService.createJWT(userId)
         return res
@@ -52,21 +48,18 @@ authRouter.post('/refresh-token', refreshTokenMiddleware,
                 secure: true,
             })
             .send({accessToken: token.accessToken})
+    }
 
-    })
-
-authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-        const result = await authService.confirmEmail(req.body.code)
+    async registrationConfirmation(req: Request, res: Response) {
+        const result = await this.authService.confirmEmail(req.body.code)
         if (result) {
             return res.sendStatus(204)
         } else {
             return res.sendStatus(400)
         }
-    })
+    }
 
-authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+    async registration(req: Request, res: Response) {
         const email = await usersService.findUserByLoginOrEmail(req.body.email)
         if (email) {
             return res.status(400).send({
@@ -78,35 +71,46 @@ authRouter.post('/registration', emailValidation, loginValidation, passwordValid
                 ]
             })
         }
-        const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
-        if (user) {
-            return res.status(204).send(user)
-        } else {
-            return res.sendStatus(400)
-        }
-    })
 
-authRouter.post('/registration-email-resending', emailValidation, isEmailExist, isEmailAlreadyConfirmed,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-        const result = await authService.resendConfirmationCode(req.body.email)
+    }
+
+    async registrationEmailResending(req: Request, res: Response) {
+        const result = await this.authService.resendConfirmationCode(req.body.email)
         if (result) {
             return res.sendStatus(204)
         } else {
             return res.sendStatus(400)
         }
-    })
+    }
 
-authRouter.get('/me', authJWTMiddleware, (req: Request, res: Response) => {
-    const user = req.user!
-    return res.send({
-        login: user.login,
-        email: user.email,
-        userId: user.id
-    })
-})
+    async me(req: Request, res: Response) {
+        const user = req.user!
+        return res.send({
+            login: user.login,
+            email: user.email,
+            userId: user.id
+        })
+    }
 
-authRouter.post('/logout', refreshTokenMiddleware,
-    async (req: Request, res: Response) => {
+    async logout(req: Request, res: Response) {
         return res.sendStatus(204)
-    })
+    }
+}
+
+const authController = new AuthController()
+
+authRouter.post('/login',authController.login.bind(authController))
+
+authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
+
+authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
+
+authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware, authController.registration.bind(authController))
+
+authRouter.post('/registration-email-resending', emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+    inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
+
+authRouter.get('/me', authJWTMiddleware, authController.me.bind(authController))
+
+authRouter.post('/logout', refreshTokenMiddleware, authController.logout.bind(authController))
+

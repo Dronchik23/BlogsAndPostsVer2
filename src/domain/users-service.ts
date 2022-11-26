@@ -1,20 +1,30 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
-import {usersRepository} from "../repositories/users-repository";
+import {UsersRepository} from "../repositories/users-repository";
 import {AccountDataType, EmailConfirmationType, PaginationType, UserDBType} from "../types/types";
 import {v4 as uuidv4} from 'uuid';
 import {add} from 'date-fns'
 import {UserViewModel} from "../models/models";
-import {emailService} from "./email-service";
+import {EmailService} from "./email-service";
 
-class UsersService {
+export class UsersService {
+    private usersService: UsersService
+    private usersRepository: UsersRepository
+    private emailService: EmailService
+
+   constructor() {
+       this.usersService = new UsersService()
+       this.usersRepository = new UsersRepository()
+       this.emailService = new EmailService()
+   }
+
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageNumber: any,
                        pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationType> {
 
-        const allUsers = await usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy,
+        const allUsers = await this.usersRepository.getAllUsers(searchLoginTerm, searchEmailTerm, pageSize, sortBy,
             sortDirection, pageNumber)
 
-        const totalCount = await usersRepository.getUsersCount(searchLoginTerm, searchEmailTerm)
+        const totalCount = await this.usersRepository.getUsersCount(searchLoginTerm, searchEmailTerm)
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
@@ -35,17 +45,17 @@ class UsersService {
             new AccountDataType(login, email, passwordHash, createdAt),
             new EmailConfirmationType(code, expirationDate, false)
         )
-        const result = await usersRepository.createUser(user)
+        const result = await this.usersRepository.createUser(user)
 
         try {
-            await emailService.sendEmailRegistrationMessage(user)
+            await this.emailService.sendEmailRegistrationMessage(user)
         } catch (err) {
             console.error(err)
         }
         return result
     }
     async getUserByUserId(id: string): Promise<UserViewModel | null> {
-        const user = await usersRepository.findUserByUserId(id)
+        const user = await this.usersRepository.findUserByUserId(id)
         if (user) {
             return user
         } else {
@@ -57,10 +67,10 @@ class UsersService {
         return hash
     }
     async deleteUserByUserId(id: string) {
-        return await usersRepository.deleteUserByUserId(id)
+        return await this.usersRepository.deleteUserByUserId(id)
     }
     async findUserByLoginOrEmail(email: string) {
-        return await usersRepository.findByLoginOrEmail(email)
+        return await this.usersRepository.findByLoginOrEmail(email)
     }
 }
 

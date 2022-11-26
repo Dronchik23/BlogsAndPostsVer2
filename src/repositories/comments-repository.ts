@@ -1,4 +1,4 @@
-import {commentsCollection, postsCollection} from "../db";
+import {commentsCollection} from "../db";
 import {CommentDBType} from "../types/types";
 import {Filter} from "mongodb";
 import {CommentViewModel, UserViewModel} from "../models/models";
@@ -13,7 +13,7 @@ const fromCommentDBTypeToCommentViewModel = (comment: CommentDBType): CommentVie
     }
 }
 
-class CommentsRepository {
+export class CommentsRepository {
     async createComment(commentForSave: CommentDBType): Promise<CommentViewModel> {
         await commentsCollection.insertOne(commentForSave)
         return fromCommentDBTypeToCommentViewModel(commentForSave)
@@ -48,5 +48,3 @@ class CommentsRepository {
         return result.deletedCount === 1
     }
 }
-
-export const commentsRepository = new CommentsRepository()

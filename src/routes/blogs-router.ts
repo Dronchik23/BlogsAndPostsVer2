@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express";
+import {Response, Router} from "express";
 import {basicAuthMiddleware} from "../middlewares/basic-auth-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
@@ -10,34 +10,41 @@ import {
     websiteUrlValidation
 } from "../middlewares/validations";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
-import {blogsService} from "../domain/blogs-service";
-import {postsService} from "../domain/posts-service";
+import {BlogsService} from "../domain/blogs-service";
 import {
     PaginationType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery
 } from "../types/types";
 import {BlogCreateModel, BlogUpdateModel, BlogViewModel, PaginationInputQueryModel} from "../models/models";
+import {PostsService} from "../domain/posts-service";
 
 
 export const blogsRouter = Router({})
 
 class BlogsController {
+    private blogsService: BlogsService
+    private postsService: PostsService
+
+    constructor() {
+        this.blogsService = new BlogsService()
+        this.postsService = new PostsService()
+    }
+
     async geAllBlogs(req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) {
         const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
-        const allBlogs = await blogsService.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
+        const allBlogs = await this.blogsService.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
         return res.send(allBlogs)
     }
 
     async createBlog(req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel>) {
-        const newBlog = await blogsService.createBlog(req.body.name, req.body.description, req.body.websiteUrl)
+        const newBlog = await this.blogsService.createBlog(req.body.name, req.body.description, req.body.websiteUrl)
         return res.status(201).send(newBlog)
     }
 
-    async getPostByBlogId(req: RequestWithParamsAndBody<{ blogId: string }, PaginationInputQueryModel>, res: Response)
-    {
+    async getPostByBlogId(req: RequestWithParamsAndBody<{ blogId: string }, PaginationInputQueryModel>, res: Response) {
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query
-        const blog = await blogsService.findBlogById(req.params.blogId)
+        const blog = await this.blogsService.findBlogById(req.params.blogId)
         if (!blog) return res.sendStatus(404)
-        const posts = await postsService.findPostsByBlogId(req.params.blogId, pageNumber, pageSize, sortBy,
+        const posts = await this.postsService.findPostsByBlogId(req.params.blogId, pageNumber, pageSize, sortBy,
             sortDirection)
         if (posts) {
             res.send(posts)
@@ -51,9 +58,9 @@ class BlogsController {
         title: string,
         shortDescription: string, content: string, blogId: string, blogName: string
     }>, res: Response) {
-        const blog = await blogsService.findBlogById(req.params.blogId)
+        const blog = await this.blogsService.findBlogById(req.params.blogId)
         if (!blog) return res.sendStatus(404)
-        const newPost = await postsService.createPost(
+        const newPost = await this.postsService.createPost(
             req.body.title, req.body.shortDescription, req.body.content, req.params.blogId, req.body.blogName)
 
         if (newPost) {
@@ -71,7 +78,7 @@ class BlogsController {
     }
 
     async getBlogById(req: RequestWithParams<{ id: string }>, res: Response<BlogViewModel>) {
-        const blog = await blogsService.findBlogById(req.params.id)
+        const blog = await this.blogsService.findBlogById(req.params.id)
         if (blog) {
             res.send(blog)
         } else {
@@ -81,7 +88,7 @@ class BlogsController {
     }
 
     async updateBlogById(req: RequestWithParamsAndBody<{ blogId: string }, BlogUpdateModel>, res: Response) {
-        const isUpdated = await blogsService.updateBlogById(req.params.blogId, req.body.name, req.body.websiteUrl)
+        const isUpdated = await this.blogsService.updateBlogById(req.params.blogId, req.body.name, req.body.websiteUrl)
         if (isUpdated) {
             res.sendStatus(204)
         } else {
@@ -90,7 +97,7 @@ class BlogsController {
     }
 
     async deleteBlogByBlogId(req: RequestWithParams<{ blogId: string }>, res: Response) {
-        const isDeleted = await blogsService.deleteBlogByBlogId(req.params.blogId)
+        const isDeleted = await this.blogsService.deleteBlogByBlogId(req.params.blogId)
         if (isDeleted) {
             res.sendStatus(204)
         } else {
@@ -101,21 +108,21 @@ class BlogsController {
 
 const blogsController = new BlogsController()
 
-blogsRouter.get('/', queryParamsMiddleware, blogsController.geAllBlogs)
+blogsRouter.get('/', queryParamsMiddleware, blogsController.geAllBlogs.bind(blogsController))
 
 blogsRouter.post('/',
     basicAuthMiddleware, nameValidation, websiteUrlValidation, inputValidationMiddleware, shortDescriptionValidation,
-    blogsController.createBlog)
+    blogsController.createBlog.bind(blogsController))
 
-blogsRouter.get('/:blogId/posts', queryParamsMiddleware, blogsController.getPostByBlogId)
+blogsRouter.get('/:blogId/posts', queryParamsMiddleware, blogsController.getPostByBlogId.bind(blogsController))
 
 blogsRouter.post('/:blogId/posts', queryParamsMiddleware,
     basicAuthMiddleware, titleValidation, shortDescriptionValidation, contentValidation, paramsBlogIdValidation,
-    inputValidationMiddleware, blogsController.createPostByBlogId)
+    inputValidationMiddleware, blogsController.createPostByBlogId.bind(blogsController))
 
-blogsRouter.get('/:id', blogsController.getBlogById)
+blogsRouter.get('/:id', blogsController.getBlogById.bind(blogsController))
 
 blogsRouter.put('/:blogId', basicAuthMiddleware, nameValidation, websiteUrlValidation, inputValidationMiddleware,
-    shortDescriptionValidation, paramsBlogIdValidation, blogsController.updateBlogById)
+    shortDescriptionValidation, paramsBlogIdValidation, blogsController.updateBlogById.bind(blogsController))
 
-blogsRouter.delete('/:blogId', basicAuthMiddleware, blogsController.deleteBlogByBlogId)
+blogsRouter.delete('/:blogId', basicAuthMiddleware, blogsController.deleteBlogByBlogId.bind(blogsController))

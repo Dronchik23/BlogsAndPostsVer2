@@ -1,7 +1,7 @@
 import {postsCollection} from "../db";
 import {Filter} from "mongodb";
-import {BlogDBType, PostDBType, UserDBType} from "../types/types";
-import {BlogViewModel, PostViewModel, UserViewModel} from "../models/models";
+import {PostDBType} from "../types/types";
+import {PostViewModel} from "../models/models";
 
 
 const fromPostDBTypePostViewModel = (post: PostDBType): PostViewModel => {
@@ -90,5 +90,3 @@ export class PostsRepository {
         return postsCollection.deleteMany({})
     }
 }
-
-export const postsRepository = new PostsRepository()

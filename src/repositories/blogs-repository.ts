@@ -5,7 +5,7 @@ import {BlogViewModel} from "../models/models";
 
 
 const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogDBType> => {
-    return {name: {$regex: searchNameTerm ? searchNameTerm : '', $options:'i'}}
+    return {name: {$regex: searchNameTerm ? searchNameTerm : '', $options: 'i'}}
 }
 
 const fromBlogDBTypeBlogViewModel = (blog: BlogDBType): BlogViewModel => {
@@ -29,6 +29,7 @@ const fromBlogDBTypeBlogViewModelWithPagination = (blogs: BlogDBType[]): BlogVie
 }
 
 export class BlogsRepository {
+
     async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<BlogViewModel[]> {
         const filter = searchNameTermFilter(searchNameTerm)
@@ -37,8 +38,9 @@ export class BlogsRepository {
             .limit(pageSize)
             .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
             .toArray()
-        return  fromBlogDBTypeBlogViewModelWithPagination(sortedBlogs)
+        return fromBlogDBTypeBlogViewModelWithPagination(sortedBlogs)
     }
+
     async findBlogByBlogId(id: string): Promise<BlogViewModel | null> {
         let blog = await blogsCollection.findOne({id})
         if (blog) {
@@ -47,10 +49,12 @@ export class BlogsRepository {
             return null
         }
     }
+
     async createBlog(blogForSave: BlogDBType): Promise<BlogViewModel> {
         await blogsCollection.insertOne(blogForSave)
         return fromBlogDBTypeBlogViewModel(blogForSave)
     }
+
     async updateBlogById(id: string, name: string, youtubeUrl: string) {
         const result = await blogsCollection.updateMany({id: id}, {
             $set: {
@@ -60,19 +64,21 @@ export class BlogsRepository {
         })
         return result.matchedCount === 1
     }
+
     async deleteBlogByBlogId(id: string) {
         const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     }
+
     async getBlogsCount(searchNameTerm?: string) {
         const filter = searchNameTermFilter(searchNameTerm)
         return await blogsCollection.countDocuments(filter)
     }
+
     async deleteAllBlogs() {
         return blogsCollection.deleteMany({})
     }
 }
 
-export const blogsRepository = new BlogsRepository()
 
 

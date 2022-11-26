@@ -1,13 +1,21 @@
 import {EmailConfirmationType} from "../types/types";
-import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
-import {emailService} from "./email-service";
+import {EmailService} from "./email-service";
 import {randomUUID} from "crypto";
+import {UsersRepository} from "../repositories/users-repository";
 
 
-export const authService = {
+export class AuthService {
+    private usersRepository: UsersRepository
+    private emailService: EmailService;
+
+    constructor() {
+        this.usersRepository = new UsersRepository()
+        this.emailService = new EmailService()
+    }
+
     async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
-        const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
+        const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail)
         console.log(user, 'user in service')
         if (!user) return null
         const isHashIsEquals = await this._isPasswordCorrect(password, user.accountData.passwordHash)
@@ -16,26 +24,26 @@ export const authService = {
         } else {
             return null
         }
-    },
+    }
     async _isPasswordCorrect(password: string, hash: string) {
         const isEqual = await bcrypt.compare(password, hash)
         return isEqual
-    },
+    }
     async confirmEmail(code: string): Promise<boolean> {
-        let user = await usersRepository.findUserByConfirmationCode(code)
+        let user = await this.usersRepository.findUserByConfirmationCode(code)
         if (!user) return false
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
-        let result = await usersRepository.updateConfirmation(user._id)
+        let result = await this.usersRepository.updateConfirmation(user._id)
         return result
-    },
+    }
     async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean > {
-        const user = await usersRepository.findByLoginOrEmail(email)
+        const user = await this.usersRepository.findByLoginOrEmail(email)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
         const newCode = randomUUID()
-        await usersRepository.updateConfirmationCodeByUserId(user._id, newCode)
-        await emailService.resendingEmailMessage(user.accountData.email, newCode)
+        await this.usersRepository.updateConfirmationCodeByUserId(user._id, newCode)
+        await this.emailService.resendingEmailMessage(user.accountData.email, newCode)
         return true
     }
 }

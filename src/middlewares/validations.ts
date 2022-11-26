@@ -1,5 +1,7 @@
 import {body, param} from "express-validator";
-import {usersRepository} from "../repositories/users-repository";
+import {UsersRepository} from "../repositories/users-repository";
+
+const usersRepository = new UsersRepository()
 
 export const nameValidation = body('name').trim().isLength({min:1, max:15}).isString()
 export const websiteUrlValidation = body('websiteUrl').trim().isLength({min:0, max:100}).isString()

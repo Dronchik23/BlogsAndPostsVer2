@@ -1,13 +1,18 @@
-import {blogsRepository} from "../repositories/blogs-repository";
+import {BlogsRepository} from "../repositories/blogs-repository";
 import {BlogDBType, PaginationType} from "../types/types";
 import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/models";
 
-class BlogsService {
+export class BlogsService {
+    blogsRepository: BlogsRepository
+    constructor() {
+        this.blogsRepository = new BlogsRepository()
+    }
+
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<PaginationType> {
-        const allBlogs = await blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
-        const totalCount = await blogsRepository.getBlogsCount(searchNameTerm)
+        const allBlogs = await this.blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
+        const totalCount = await this.blogsRepository.getBlogsCount(searchNameTerm)
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
@@ -18,7 +23,7 @@ class BlogsService {
         }
     }
     async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return blogsRepository.findBlogByBlogId(id)
+        return this.blogsRepository.findBlogByBlogId(id)
     }
     async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
         const newBlog = new BlogDBType(
@@ -29,17 +34,16 @@ class BlogsService {
             new Date()
         )
 
-        const createdBlog = await blogsRepository.createBlog(newBlog)
+        const createdBlog = await this.blogsRepository.createBlog(newBlog)
         return createdBlog
     }
     async updateBlogById(id: string, name: string, websiteUrl: string) {
-        return await blogsRepository.updateBlogById(id, name, websiteUrl)
+        return await this.blogsRepository.updateBlogById(id, name, websiteUrl)
     }
     async deleteBlogByBlogId(id: string) {
-        return await blogsRepository.deleteBlogByBlogId(id)
+        return await this.blogsRepository.deleteBlogByBlogId(id)
     }
 }
 
-export const blogsService = new BlogsService()
 
 

@@ -1,14 +1,25 @@
-import {postsRepository} from "../repositories/posts-repository";
-import {blogsRepository} from "../repositories/blogs-repository";
+import {PostsRepository} from "../repositories/posts-repository";
 import {PaginationType, PostDBType} from "../types/types";
 import {BlogViewModel, PostViewModel} from "../models/models";
 import {ObjectId} from "mongodb";
+import {BlogsService} from "./blogs-service";
 
-class PostsService {
+export class PostsService {
+    private postsService: PostsService
+    private blogsService: BlogsService
+    private postsRepository: PostsRepository
+
+
+    constructor() {
+        this.postsService = new PostsService()
+        this.blogsService = new BlogsService()
+        this.postsRepository = new PostsRepository()
+    }
+
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number)
         : Promise<PaginationType> {
-        const allPosts = await postsRepository.findAllPosts(pageSize, sortBy, sortDirection, pageNumber)
-        const totalCount = await postsRepository.getPostsCount({})
+        const allPosts = await this.postsRepository.findAllPosts(pageSize, sortBy, sortDirection, pageNumber)
+        const totalCount = await this.postsRepository.getPostsCount({})
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
             pagesCount: pagesCount === 0 ? 1 : pagesCount,
@@ -18,12 +29,14 @@ class PostsService {
             items: allPosts
         }
     }
+
     async findPostById(id: string): Promise<PostViewModel | null> {
-        return postsRepository.findPostById(id)
+        return this.postsRepository.findPostById(id)
     }
+
     async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string)
         : Promise<PostViewModel | null> {
-        const blog: BlogViewModel | null = await blogsRepository.findBlogByBlogId(blogId)
+        const blog: BlogViewModel | null = await this.blogsService.findBlogById(blogId)
         if (!blog) {
             return null
         }
@@ -35,24 +48,27 @@ class PostsService {
             blogId,
             blogName,
             new Date()
-    )
-        const createdPost = await postsRepository.createPost(newPost)
+        )
+        const createdPost = await this.postsRepository.createPost(newPost)
         return createdPost
 
     }
+
     async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string)
         : Promise<PostViewModel | boolean> {
 
-        return await postsRepository.updatePostById(id, title, shortDescription, content, blogId)
+        return await this.postsRepository.updatePostById(id, title, shortDescription, content, blogId)
     }
+
     async deletePostById(id: string): Promise<PostViewModel | boolean> {
-        return await postsRepository.deletePostById(id)
+        return await this.postsRepository.deletePostById(id)
     }
+
     async findPostsByBlogId(blogId: string, pageNumber: any, pageSize: any, sortBy: any, sortDirection: any) {
 
-        const foundPostsById = await postsRepository.findPostsByBlogId(blogId, pageNumber, pageSize, sortBy,
+        const foundPostsById = await this.postsRepository.findPostsByBlogId(blogId, pageNumber, pageSize, sortBy,
             sortDirection)
-        const totalCount = await postsRepository.getPostsCount({blogId: blogId})
+        const totalCount = await this.postsRepository.getPostsCount({blogId: blogId})
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
             page: pageNumber,
@@ -62,5 +78,3 @@ class PostsService {
         }
     }
 }
-
-export const postsService = new PostsService()

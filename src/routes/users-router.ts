@@ -1,5 +1,5 @@
 import {Response, Router} from "express";
-import {usersService} from "../domain/users-service";
+import {UsersService, usersService} from "../domain/users-service";
 import {queryParamsMiddleware} from "../middlewares/query-params-parsing-middleware";
 import {emailValidation, loginValidation, passwordValidation} from "../middlewares/validations";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
@@ -9,9 +9,17 @@ import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../mode
 
 
 
+
 export const usersRouter = Router({})
 
 class UsersController {
+
+    private usersService: UsersService
+
+    constructor() {
+        this.usersService = new UsersService()
+    }
+
     async getAllUsers(req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) {
 
         const {searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
@@ -49,11 +57,11 @@ class UsersController {
 
 const usersController = new UsersController()
 
-usersRouter.get('/', queryParamsMiddleware, usersController.getAllUsers)
+usersRouter.get('/', queryParamsMiddleware, usersController.getAllUsers.bind(usersController))
 
-usersRouter.get('/:id', usersController.getUserByUserId)
+usersRouter.get('/:id', usersController.getUserByUserId.bind(usersController))
 
 usersRouter.post('/', queryParamsMiddleware, basicAuthMiddleware, loginValidation, passwordValidation,
-    emailValidation, inputValidationMiddleware, usersController.createUser)
+    emailValidation, inputValidationMiddleware, usersController.createUser.bind(usersController))
 
-usersRouter.delete('/:id', basicAuthMiddleware, queryParamsMiddleware, usersController.deleteUserByUserId)
+usersRouter.delete('/:id', basicAuthMiddleware, queryParamsMiddleware, usersController.deleteUserByUserId.bind(usersController))
