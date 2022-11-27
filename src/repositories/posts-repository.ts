@@ -30,6 +30,7 @@ const fromPostDBTypeToPostViewModelWithPagination = (posts: PostDBType[]): PostV
 }
 
 export class PostsRepository {
+    
     async findAllPosts(pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<PostViewModel[]> {
        const allPosts = await postsCollection
             .find({})

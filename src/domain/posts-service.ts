@@ -5,13 +5,12 @@ import {ObjectId} from "mongodb";
 import {BlogsService} from "./blogs-service";
 
 export class PostsService {
-    private postsService: PostsService
-    private blogsService: BlogsService
-    private postsRepository: PostsRepository
+
+    public blogsService: BlogsService
+    public postsRepository: PostsRepository
 
 
     constructor() {
-        this.postsService = new PostsService()
         this.blogsService = new BlogsService()
         this.postsRepository = new PostsRepository()
     }

@@ -8,15 +8,14 @@ import {UserViewModel} from "../models/models";
 import {EmailService} from "./email-service";
 
 export class UsersService {
-    private usersService: UsersService
+
     private usersRepository: UsersRepository
     private emailService: EmailService
 
-   constructor() {
-       this.usersService = new UsersService()
-       this.usersRepository = new UsersRepository()
-       this.emailService = new EmailService()
-   }
+    constructor() {
+        this.usersRepository = new UsersRepository()
+        this.emailService = new EmailService()
+    }
 
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageNumber: any,
                        pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationType> {
@@ -34,13 +33,14 @@ export class UsersService {
             items: allUsers
         }
     }
+
     async createUser(login: string, email: string, password: string): Promise<UserViewModel> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
         const code = uuidv4()
         const createdAt = new Date
         const expirationDate = add(new Date(), {hours: 2, minutes: 3})
-        const user = new UserDBType (
+        const user = new UserDBType(
             new ObjectId(),
             new AccountDataType(login, email, passwordHash, createdAt),
             new EmailConfirmationType(code, expirationDate, false)
@@ -54,6 +54,7 @@ export class UsersService {
         }
         return result
     }
+
     async getUserByUserId(id: string): Promise<UserViewModel | null> {
         const user = await this.usersRepository.findUserByUserId(id)
         if (user) {
@@ -62,13 +63,16 @@ export class UsersService {
             return null
         }
     }
+
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash
     }
+
     async deleteUserByUserId(id: string) {
         return await this.usersRepository.deleteUserByUserId(id)
     }
+
     async findUserByLoginOrEmail(email: string) {
         return await this.usersRepository.findByLoginOrEmail(email)
     }

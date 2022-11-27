@@ -4,7 +4,8 @@ import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/models";
 
 export class BlogsService {
-    blogsRepository: BlogsRepository
+    public blogsRepository: BlogsRepository
+
     constructor() {
         this.blogsRepository = new BlogsRepository()
     }
@@ -22,9 +23,11 @@ export class BlogsService {
             items: allBlogs
         }
     }
+
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         return this.blogsRepository.findBlogByBlogId(id)
     }
+
     async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogViewModel> {
         const newBlog = new BlogDBType(
             new ObjectId,
@@ -37,9 +40,11 @@ export class BlogsService {
         const createdBlog = await this.blogsRepository.createBlog(newBlog)
         return createdBlog
     }
+
     async updateBlogById(id: string, name: string, websiteUrl: string) {
         return await this.blogsRepository.updateBlogById(id, name, websiteUrl)
     }
+
     async deleteBlogByBlogId(id: string) {
         return await this.blogsRepository.deleteBlogByBlogId(id)
     }
