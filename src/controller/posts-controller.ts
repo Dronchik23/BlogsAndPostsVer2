@@ -16,12 +16,13 @@ import {
     PostViewModel
 } from "../models/models";
 import {Response} from "express";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class PostsController {
 
-    constructor(protected postsService: PostsService, protected commentsService: CommentsService) {}
+    constructor(@inject(PostsService) protected postsService: PostsService,
+                @inject(CommentsService) protected commentsService: CommentsService) {}
 
     async getCommentByPostId(req: RequestWithParamsAndBody<{ id: string }, PaginationInputQueryModel>,
                              res: Response<PaginationType>) {

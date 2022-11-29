@@ -9,17 +9,19 @@ import {
 } from "../types/types";
 import {BlogCreateModel, BlogUpdateModel, BlogViewModel, PaginationInputQueryModel} from "../models/models";
 import {Response} from "express";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class BlogsController {
 
-    constructor(protected blogsService: BlogsService, protected postsService: PostsService) {
+    constructor(@inject(BlogsService) protected blogsService: BlogsService,
+                @inject(PostsService) protected postsService: PostsService) {
     }
 
     async getAllBlogs(req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) {
         const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query
-        const allBlogs = await this.blogsService.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
+        const allBlogs = await this.blogsService
+            .findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
         return res.send(allBlogs)
     }
 
@@ -28,8 +30,8 @@ export class BlogsController {
         return res.status(201).send(newBlog)
     }
 
-    async getPostByBlogId(req: RequestWithParamsAndBody<{ blogId: string }, PaginationInputQueryModel>, res: Response)
-    {
+    async getPostByBlogId(req: RequestWithParamsAndBody<{ blogId: string },
+        PaginationInputQueryModel>, res: Response) {
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query
         const blog = await this.blogsService.findBlogById(req.params.blogId)
         if (!blog) return res.sendStatus(404)

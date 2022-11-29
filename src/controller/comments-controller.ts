@@ -1,11 +1,11 @@
 import {CommentsService} from "../domain/comments-service";
 import {Request, Response} from "express";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class CommentsController {
 
-    constructor(protected commentsService: CommentsService) {}
+    constructor(@inject(CommentsService) protected commentsService: CommentsService) {}
 
     async updateCommentByUserId(req: Request, res: Response) {
         const user = req.user!

@@ -3,12 +3,14 @@ import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
 import {TokenType} from "../types/types";
 import {jwtService} from "../application/jwt-service";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class AuthController {
 
-    constructor(protected authService: AuthService, protected usersService: UsersService) {}
+    constructor(@inject(AuthService) protected authService: AuthService,
+                @inject(UsersService) protected usersService: UsersService) {
+    }
 
     async login(req: Request, res: Response) {
         const user = await this.authService.checkCredentials(req.body.loginOrEmail, req.body.password)

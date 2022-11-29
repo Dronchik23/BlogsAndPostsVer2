@@ -2,12 +2,13 @@ import {UsersService} from "../domain/users-service";
 import {PaginationType, RequestWithBody, RequestWithParams, RequestWithQuery} from "../types/types";
 import {PaginationInputQueryModel, UserCreateModel, UserViewModel} from "../models/models";
 import {Response} from "express";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class UsersController {
 
-    constructor(protected usersService: UsersService) {}
+    constructor(@inject(UsersService) protected usersService: UsersService) {
+    }
 
     async getAllUsers(req: RequestWithQuery<PaginationInputQueryModel>, res: Response<PaginationType>) {
 

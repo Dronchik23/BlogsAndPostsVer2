@@ -1,7 +1,10 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
-import {usersService} from "../composition-root";
+import {UsersService} from "../domain/users-service";
+import {UsersRepository} from "../repositories/users-repository";
+import {EmailService} from "../domain/email-service";
 
+const usersService = new UsersService(new UsersRepository, new EmailService)
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     console.log('usersService', usersService)
