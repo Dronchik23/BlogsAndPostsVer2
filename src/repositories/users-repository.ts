@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {usersCollection} from "../db";
 import {Filter, ObjectId} from "mongodb";
 import {UserDBType} from "../types/types";

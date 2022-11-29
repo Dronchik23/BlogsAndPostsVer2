@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {CommentDBType} from "../types/types";
 import {PostsRepository} from "../repositories/posts-repository";
 import {CommentsRepository} from "../repositories/comments-repository";

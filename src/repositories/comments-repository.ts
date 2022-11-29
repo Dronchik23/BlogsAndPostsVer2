@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {commentsCollection} from "../db";
 import {CommentDBType} from "../types/types";
 import {Filter} from "mongodb";

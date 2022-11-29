@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {blogsCollection} from "../db"
 import {BlogDBType} from "../types/types";
 import {Filter} from "mongodb";

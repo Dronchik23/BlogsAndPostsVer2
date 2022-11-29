@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {BlogsRepository} from "../repositories/blogs-repository";
 import {BlogDBType, PaginationType} from "../types/types";
 import {ObjectId} from "mongodb";

@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {EmailConfirmationType} from "../types/types";
 import bcrypt from "bcrypt";
 import {EmailService} from "./email-service";

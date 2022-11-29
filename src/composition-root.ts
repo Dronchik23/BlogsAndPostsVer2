@@ -18,36 +18,28 @@ import {BlogsController} from "./controller/blogs-controller";
 import {Container} from "inversify";
 
 
-const objects: any[] = []
-
-const postsRepository = new PostsRepository()
-objects.push(postsRepository)
-const blogsRepository = new BlogsRepository()
-objects.push(blogsRepository)
-const blogsService = new BlogsService(blogsRepository)
-objects.push(blogsService)
-const postsService = new PostsService(blogsService, postsRepository)
-objects.push(postsService)
-const commentsRepository = new CommentsRepository()
-objects.push(commentsRepository)
-const commentsService = new CommentsService(postsRepository, commentsRepository)
-objects.push(commentsService)
-const emailService = new EmailService()
-objects.push(emailService)
-const usersRepository = new UsersRepository()
-objects.push(usersRepository)
-export const usersService = new UsersService(usersRepository, emailService)
-objects.push(usersService)
-const authService = new AuthService(usersRepository, emailService)
-objects.push(authService)
-
-// export const blogsController = new BlogsController(blogsService, postsService)
-// export const postsController = new PostsController(postsService, commentsService)
+// const objects: any[] = []
 //
-// export const usersController = new UsersController(usersService)
-// export const commentsController = new CommentsController(commentsService)
-// export const authController = new AuthController(authService, usersService)
-// export const emailController = new EmailController(emailService)
+// const postsRepository = new PostsRepository()
+// objects.push(postsRepository)
+// const blogsRepository = new BlogsRepository()
+// objects.push(blogsRepository)
+// const blogsService = new BlogsService(blogsRepository)
+// objects.push(blogsService)
+// const postsService = new PostsService(blogsService, postsRepository)
+// objects.push(postsService)
+// const commentsRepository = new CommentsRepository()
+// objects.push(commentsRepository)
+// const commentsService = new CommentsService(postsRepository, commentsRepository)
+// objects.push(commentsService)
+// const emailService = new EmailService()
+// objects.push(emailService)
+// const usersRepository = new UsersRepository()
+// objects.push(usersRepository)
+// export const usersService = new UsersService(usersRepository, emailService)
+// objects.push(usersService)
+// const authService = new AuthService(usersRepository, emailService)
+// objects.push(authService)
 
 
 export const container = new Container()

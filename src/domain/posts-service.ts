@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {PostsRepository} from "../repositories/posts-repository";
 import {PaginationType, PostDBType} from "../types/types";
 import {BlogViewModel, PostViewModel} from "../models/models";

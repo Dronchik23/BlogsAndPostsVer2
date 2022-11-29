@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {postsCollection} from "../db";
 import {Filter} from "mongodb";
 import {PostDBType} from "../types/types";

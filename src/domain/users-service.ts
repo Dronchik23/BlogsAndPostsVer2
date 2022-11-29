@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {UsersRepository} from "../repositories/users-repository";

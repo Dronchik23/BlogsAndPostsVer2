@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {emailAdapter} from "../adapters/email-adapter";
 import {UserDBType} from "../types/types";
 import {injectable} from "inversify";
