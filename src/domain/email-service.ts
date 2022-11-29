@@ -1,6 +1,9 @@
+import "reflect-metadata";
 import {emailAdapter} from "../adapters/email-adapter";
 import {UserDBType} from "../types/types";
+import {injectable} from "inversify";
 
+@injectable()
 export class EmailService {
     async sendEmail(email: any, subject: string, message: string) {
         await emailAdapter.sendEmail(email, subject, message)

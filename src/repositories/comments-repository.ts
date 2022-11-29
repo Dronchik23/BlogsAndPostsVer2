@@ -1,7 +1,9 @@
+import "reflect-metadata";
 import {commentsCollection} from "../db";
 import {CommentDBType} from "../types/types";
 import {Filter} from "mongodb";
 import {CommentViewModel, UserViewModel} from "../models/models";
+import {injectable} from "inversify";
 
 const fromCommentDBTypeToCommentViewModel = (comment: CommentDBType): CommentViewModel => {
     return {
@@ -13,6 +15,7 @@ const fromCommentDBTypeToCommentViewModel = (comment: CommentDBType): CommentVie
     }
 }
 
+@injectable()
 export class CommentsRepository {
     async createComment(commentForSave: CommentDBType): Promise<CommentViewModel> {
         await commentsCollection.insertOne(commentForSave)

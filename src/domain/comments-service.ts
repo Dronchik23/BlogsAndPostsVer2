@@ -1,17 +1,15 @@
+import "reflect-metadata";
 import {CommentDBType} from "../types/types";
 import {PostsRepository} from "../repositories/posts-repository";
 import {CommentsRepository} from "../repositories/comments-repository";
 import {ObjectId} from "mongodb";
 import {CommentViewModel, PostViewModel, UserViewModel} from "../models/models";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsService {
-    private commentsRepository: CommentsRepository
-    private postsRepository: PostsRepository
 
-    constructor() {
-        this.postsRepository = new PostsRepository()
-        this.commentsRepository = new CommentsRepository()
-    }
+    constructor(protected postsRepository: PostsRepository, protected commentsRepository: CommentsRepository) {}
 
     async createComment(postId: string, content: string, user: UserViewModel): Promise<CommentViewModel | null> {
         const post: PostViewModel | null = await this.postsRepository.findPostById(postId)

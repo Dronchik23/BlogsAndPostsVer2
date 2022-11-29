@@ -1,7 +1,9 @@
+import "reflect-metadata";
 import {postsCollection} from "../db";
 import {Filter} from "mongodb";
 import {PostDBType} from "../types/types";
 import {PostViewModel} from "../models/models";
+import {injectable} from "inversify";
 
 
 const fromPostDBTypePostViewModel = (post: PostDBType): PostViewModel => {
@@ -29,6 +31,7 @@ const fromPostDBTypeToPostViewModelWithPagination = (posts: PostDBType[]): PostV
     )
 }
 
+@injectable()
 export class PostsRepository {
     
     async findAllPosts(pageSize: number, sortBy: any, sortDirection: any, pageNumber: any): Promise<PostViewModel[]> {

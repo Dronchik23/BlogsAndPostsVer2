@@ -1,7 +1,9 @@
+import "reflect-metadata";
 import {blogsCollection} from "../db"
 import {BlogDBType} from "../types/types";
 import {Filter} from "mongodb";
 import {BlogViewModel} from "../models/models";
+import {injectable} from "inversify";
 
 
 const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter<BlogDBType> => {
@@ -28,6 +30,7 @@ const fromBlogDBTypeBlogViewModelWithPagination = (blogs: BlogDBType[]): BlogVie
     }))
 }
 
+@injectable()
 export class BlogsRepository {
 
     async findAllBlogs(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string,

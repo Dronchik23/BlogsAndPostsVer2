@@ -1,7 +1,9 @@
+import "reflect-metadata";
 import {usersCollection} from "../db";
 import {Filter, ObjectId} from "mongodb";
 import {UserDBType} from "../types/types";
 import {UserViewModel} from "../models/models";
+import {injectable} from "inversify";
 
 type searchLoginOrEmailTermType = string | undefined
 
@@ -32,7 +34,7 @@ const searchLoginAndEmailTermFilter = (searchLoginTerm: searchLoginOrEmailTermTy
         ]
     }
 }
-
+@injectable()
 export class UsersRepository {
     async getAllUsers(searchLoginTerm: string, searchEmailTerm: string, pageSize: number,
                       sortBy: string, sortDirection: string, pageNumber: number): Promise<UserViewModel[]> {

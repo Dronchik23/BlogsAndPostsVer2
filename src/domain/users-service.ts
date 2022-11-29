@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {UsersRepository} from "../repositories/users-repository";
@@ -6,15 +7,12 @@ import {v4 as uuidv4} from 'uuid';
 import {add} from 'date-fns'
 import {UserViewModel} from "../models/models";
 import {EmailService} from "./email-service";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersService {
 
-    private usersRepository: UsersRepository
-    private emailService: EmailService
-
-    constructor() {
-        this.usersRepository = new UsersRepository()
-        this.emailService = new EmailService()
+    constructor(protected usersRepository: UsersRepository, protected emailService: EmailService) {
     }
 
     async findAllUsers(searchLoginTerm: any, searchEmailTerm: any, pageNumber: any,
@@ -77,6 +75,4 @@ export class UsersService {
         return await this.usersRepository.findByLoginOrEmail(email)
     }
 }
-
-export const usersService = new UsersService()
 

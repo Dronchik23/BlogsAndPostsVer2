@@ -1,17 +1,15 @@
+import "reflect-metadata";
 import {EmailConfirmationType} from "../types/types";
 import bcrypt from "bcrypt";
 import {EmailService} from "./email-service";
 import {randomUUID} from "crypto";
 import {UsersRepository} from "../repositories/users-repository";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class AuthService {
-    private usersRepository: UsersRepository
-    private emailService: EmailService;
 
-    constructor() {
-        this.usersRepository = new UsersRepository()
-        this.emailService = new EmailService()
+    constructor(protected usersRepository: UsersRepository, protected emailService: EmailService) {
     }
 
     async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
@@ -25,10 +23,12 @@ export class AuthService {
             return null
         }
     }
+
     async _isPasswordCorrect(password: string, hash: string) {
         const isEqual = await bcrypt.compare(password, hash)
         return isEqual
     }
+
     async confirmEmail(code: string): Promise<boolean> {
         let user = await this.usersRepository.findUserByConfirmationCode(code)
         if (!user) return false
@@ -37,7 +37,8 @@ export class AuthService {
         let result = await this.usersRepository.updateConfirmation(user._id)
         return result
     }
-    async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean > {
+
+    async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean> {
         const user = await this.usersRepository.findByLoginOrEmail(email)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false

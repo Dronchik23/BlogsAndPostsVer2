@@ -1,14 +1,15 @@
+import "reflect-metadata";
 import {BlogsRepository} from "../repositories/blogs-repository";
 import {BlogDBType, PaginationType} from "../types/types";
 import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/models";
+import {injectable} from "inversify";
 
+
+@injectable()
 export class BlogsService {
-    public blogsRepository: BlogsRepository
 
-    constructor() {
-        this.blogsRepository = new BlogsRepository()
-    }
+    constructor(protected blogsRepository: BlogsRepository) {}
 
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<PaginationType> {

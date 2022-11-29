@@ -29,6 +29,7 @@ app.use('/email', emailRouter)
 const startApp = async () => {
     await runDb()
     app.listen(port, () => {
+        console.log(`postRouter`, postsRouter ),
         console.log(`Example app listening on port ${port}`)
     })
 }

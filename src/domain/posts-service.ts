@@ -1,18 +1,15 @@
+import "reflect-metadata";
 import {PostsRepository} from "../repositories/posts-repository";
 import {PaginationType, PostDBType} from "../types/types";
 import {BlogViewModel, PostViewModel} from "../models/models";
 import {ObjectId} from "mongodb";
 import {BlogsService} from "./blogs-service";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsService {
 
-    public blogsService: BlogsService
-    public postsRepository: PostsRepository
-
-
-    constructor() {
-        this.blogsService = new BlogsService()
-        this.postsRepository = new PostsRepository()
+    constructor(protected blogsService: BlogsService, protected postsRepository: PostsRepository) {
     }
 
     async findAllPosts(pageSize: number, sortBy: string, sortDirection: string, pageNumber: number)
@@ -29,7 +26,7 @@ export class PostsService {
         }
     }
 
-    async findPostById(id: string): Promise<PostViewModel | null> {
+    async findPostByPostId(id: string): Promise<PostViewModel | null> {
         return this.postsRepository.findPostById(id)
     }
 
