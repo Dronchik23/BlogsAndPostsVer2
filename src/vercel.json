@@ -12,5 +12,8 @@
       "src": "/(.*)",
       "dest": "src/index.ts"
     }
-  ]
+  ],
+  "scripts": {
+    "build": "[my-framework] build --output public"
+  }
 }
