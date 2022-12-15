@@ -8,6 +8,7 @@ import {testingRouter} from "./routes/testing-router"
 import {commentsRouter} from "./routes/comments-router"
 import {emailRouter} from "./routes/email-router"
 import cookieParser from "cookie-parser"
+import {devicesRouter} from "./routes/devices-router";
 
 export const app = express()
 
@@ -24,6 +25,7 @@ app.use('/auth', authRouter)
 app.use('/testing', testingRouter)
 app.use('/comments', commentsRouter)
 app.use('/email', emailRouter)
+app.use('/devices', devicesRouter)
 
 
 const startApp = async () => {
