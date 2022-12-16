@@ -4,18 +4,33 @@ import {EmailService} from "./email-service";
 import {randomUUID} from "crypto";
 import {UsersRepository} from "../repositories/users-repository";
 import {injectable} from "inversify";
+import {JwtService} from "../application/jwt-service";
+import {DevicesService} from "./device-service";
+
 
 @injectable()
 export class AuthService {
-
-    constructor(protected usersRepository: UsersRepository, protected emailService: EmailService) {
+    constructor(
+        protected usersRepository: UsersRepository,
+        protected emailService: EmailService,
+        protected jwtService: JwtService,
+        protected devicesService: DevicesService
+    ) {
     }
 
-    async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
-        const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail)
-        console.log(user, 'user in service')
+    async login (loginOrEmail: string, password: string, ip: string, title: string) {
+        const user = await this.checkCredentials(loginOrEmail, password)
         if (!user) return null
-        const isHashIsEquals = await this._isPasswordCorrect(password, user.accountData.passwordHash)
+        const userId = (user._id).toString()
+        const deviceId = await this.devicesService.createDevice(userId, ip, title)
+        if (!deviceId) return null
+        return this.jwtService.createJWT(user.id, deviceId)
+    }
+
+    private async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
+        const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail)
+        if (!user) return null
+        const isHashIsEquals = await this.isPasswordCorrect(password, user.accountData.passwordHash)
         if (isHashIsEquals) {
             return user
         } else {
@@ -23,7 +38,7 @@ export class AuthService {
         }
     }
 
-    async _isPasswordCorrect(password: string, hash: string) {
+    private async isPasswordCorrect(password: string, hash: string) {
         const isEqual = await bcrypt.compare(password, hash)
         return isEqual
     }

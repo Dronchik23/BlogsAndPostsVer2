@@ -20,7 +20,6 @@ const postsController = container.resolve(PostsController)
 
 export const postsRouter = Router({})
 
-console.log('usersService', postsController)
 postsRouter.get('/:id/comments', queryParamsMiddleware,
     postsController.getCommentByPostId.bind(postsController.getCommentByPostId))
 

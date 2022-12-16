@@ -7,7 +7,7 @@ export type PaginationType = {
     page: number
     pageSize: number
     totalCount: number
-    items: BlogViewModel[] | PostViewModel[] | UserViewModel[] | CommentViewModel
+    items: BlogViewModel[] | PostViewModel[] | UserViewModel[] | CommentViewModel | DeviceType[]
 }
 export type ErrorType = {
     errorsMessages: [{ message: string, field: string }]
@@ -84,7 +84,8 @@ export class DeviceType {
     constructor(public ip: string,
                 public title: string,
                 public lastActiveDate: string,
-                public deviceId: string
+                public deviceId: string,
+                public userId: string
     ) {
     }
 
@@ -100,6 +101,7 @@ declare global {
         export interface Request {
             user: UserViewModel | null
             userId: string | null
+            deviceId: string | null
         }
     }
 }

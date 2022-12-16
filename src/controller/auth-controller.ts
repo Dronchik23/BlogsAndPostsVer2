@@ -2,33 +2,40 @@ import {AuthService} from "../domain/auth-service";
 import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
 import {TokenType} from "../types/types";
-import {jwtService} from "../application/jwt-service";
 import {inject, injectable} from "inversify";
+import {JwtService} from "../application/jwt-service";
+import {DevicesService} from "../domain/device-service";
 
 @injectable()
 export class AuthController {
 
     constructor(@inject(AuthService) protected authService: AuthService,
-                @inject(UsersService) protected usersService: UsersService) {
+                @inject(UsersService) protected usersService: UsersService,
+                @inject(JwtService) protected jwtService: JwtService,
+                @inject(DevicesService) protected deviceService: DevicesService
+    ) {
     }
 
     async login(req: Request, res: Response) {
-        const user = await this.authService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        if (user) {
-            const token: TokenType = await jwtService.createJWT((user._id).toString())
-            res.cookie('refreshToken', token.refreshToken, {
+        const ip = req.ip
+        const title = req.headers["user-agent"]!
+        const loginOrEmail = req.body.loginOrEmail
+        const password = req.body.password
+        const tokens = await this.authService.login(loginOrEmail, password, ip, title )
+        if (!tokens) return res.sendStatus(401)
+        res.cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
                 secure: true,
             })
-            return res.send({accessToken: token.accessToken})
-        } else {
-            return res.sendStatus(401)
-        }
+        return res.send({accessToken: tokens.accessToken})
     }
 
     async refreshToken(req: Request, res: Response) {
         const userId = req.userId!
-        const token: TokenType = await jwtService.createJWT(userId)
+        const deviceId = req.deviceId!
+        const date = new Date().toISOString()
+        const newIssueAt = await this.deviceService.rewriteIssueAt(deviceId, date)
+        const token: TokenType = await this.jwtService.createJWT(userId, deviceId)
         return res
             .status(200)
             .cookie('refreshToken', token.refreshToken, {

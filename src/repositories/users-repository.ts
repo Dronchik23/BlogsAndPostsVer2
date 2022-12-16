@@ -65,7 +65,6 @@ export class UsersRepository {
             $or: [{"accountData.email": loginOrEmail},
                 {"accountData.login": loginOrEmail}]
         })
-        console.log(user, 'repo')
         return user
     }
     async findUserByConfirmationCode(code: string) {

@@ -17,6 +17,9 @@ import {EmailController} from "./controller/email-controller";
 import {BlogsController} from "./controller/blogs-controller";
 import {Container} from "inversify";
 import {DevicesController} from "./controller/devices-controller";
+import {JwtService} from "./application/jwt-service";
+import {DevicesService} from "./domain/device-service";
+import {DevicesRepository} from "./repositories/devices-repository";
 
 
 export const container = new Container()
@@ -43,6 +46,11 @@ container.bind(EmailController).to(EmailController)
 container.bind(EmailService).to(EmailService)
 
 container.bind(DevicesController).to(DevicesController)
+container.bind(DevicesService).to(DevicesService)
+container.bind(DevicesRepository).to(DevicesRepository)
+
+
+container.bind(JwtService).to(JwtService)
 
 
 

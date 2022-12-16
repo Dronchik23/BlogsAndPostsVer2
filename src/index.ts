@@ -17,6 +17,8 @@ app.use(express.json())
 
 const port = process.env.PORT || 2000
 
+app.set('trust proxy', true)
+
 app.use(cookieParser())
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
@@ -31,7 +33,6 @@ app.use('/devices', devicesRouter)
 const startApp = async () => {
     await runDb()
     app.listen(port, () => {
-        console.log(`postRouter`, postsRouter ),
         console.log(`Example app listening on port ${port}`)
     })
 }
