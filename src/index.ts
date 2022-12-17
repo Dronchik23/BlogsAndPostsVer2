@@ -10,9 +10,13 @@ import {emailRouter} from "./routes/email-router"
 import cookieParser from "cookie-parser"
 import {devicesRouter} from "./routes/devices-router";
 
+
 export const app = express()
 
+
+
 app.use(express.json())
+
 
 
 const port = process.env.PORT || 2000

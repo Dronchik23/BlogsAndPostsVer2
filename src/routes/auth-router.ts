@@ -11,23 +11,30 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {refreshTokenMiddleware} from "../middlewares/refresh-token-middleware";
 import {container} from "../composition-root";
 import {AuthController} from "../controller/auth-controller";
+import rateLimit from 'express-rate-limit'
+
+
+const limiter = rateLimit({
+    windowMs: 10,
+    max: 5
+})
 
 const authController = container.resolve(AuthController)
 
 export const authRouter = Router({})
 
 
-authRouter.post('/login', authController.login.bind(authController))
+authRouter.post('/login', limiter, authController.login.bind(authController))
 
 authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
 
-authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware,
-    authController.registrationConfirmation.bind(authController))
+authRouter.post('/registration-confirmation', limiter, isCodeAlreadyConfirmed, codeValidation,
+    inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
 
-authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
+authRouter.post('/registration', limiter, emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
     authController.registration.bind(authController))
 
-authRouter.post('/registration-email-resending', emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+authRouter.post('/registration-email-resending', limiter, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
 
 authRouter.get('/me', authJWTMiddleware, authController.me.bind(authController))

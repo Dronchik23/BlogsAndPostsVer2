@@ -3,6 +3,7 @@ import {DevicesService} from "../domain/device-service";
 import {Request, Response} from "express";
 
 
+
 @injectable()
 export class DevicesController {
 
