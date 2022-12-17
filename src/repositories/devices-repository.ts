@@ -25,7 +25,7 @@ export class DevicesRepository {
     }
 
     async findAllDevices(): Promise<any> {
-        return devicesCollection.find().toArray()
+        return devicesCollection.find({}, {projection: {_id: false}}).toArray()
 
     }
 
