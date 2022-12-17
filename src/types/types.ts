@@ -81,10 +81,10 @@ export class EmailConfirmationType {
 }
 
 export class DeviceType {
-    constructor(public ip: string,
-                public title: string,
+    constructor(public deviceId: string,
+                public ip: string,
                 public lastActiveDate: string,
-                public deviceId: string,
+                public title: string,
                 public userId: string
     ) {
     }
