@@ -35,17 +35,15 @@ export class DevicesService {
 
     }
 
-    async findAllDevices(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
-                         pageNumber: number): Promise<PaginationType> {
-        const allDevices = await this.devicesRepository.findAllDevices(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
-        const totalCount = await this.devicesRepository.getDevicesCount(searchNameTerm)
-        const pagesCount = Math.ceil(totalCount / pageSize)
-        return {
-            pagesCount: pagesCount === 0 ? 1 : pagesCount,
-            page: pageNumber,
-            pageSize: pageSize,
-            totalCount: totalCount,
-            items: allDevices
-        }
+    async findAllDevices(): Promise<any> {
+       return await this.devicesRepository.findAllDevices()
+    }
+
+    async deleteAllDevicesExcludeCurrent(userId: string, currentDevice: string) {
+        return await this.devicesRepository.deleteAllDevicesExcludeCurrent(userId, currentDevice)
+    }
+
+    async deleteDeviceByDeviceId(deviceId: string) {
+        return await this.devicesRepository.deleteDeviceByDeviceId(deviceId)
     }
 }

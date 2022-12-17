@@ -1,5 +1,5 @@
-import {blogsCollection, devicesCollection} from "../db";
-import {BlogDBType, DeviceType} from "../types/types";
+import { devicesCollection} from "../db";
+import { DeviceType} from "../types/types";
 import {injectable} from "inversify";
 import {Filter} from "mongodb";
 
@@ -9,8 +9,6 @@ const searchNameTermFilter = (searchNameTerm: string | undefined | null): Filter
 
 @injectable()
 export class DevicesRepository {
-    constructor() {
-    }
 
     async saveNewDevice(device: DeviceType) {
         return devicesCollection.insertOne(device)
@@ -26,19 +24,22 @@ export class DevicesRepository {
 
     }
 
-    async findAllDevices(searchNameTerm: string, pageSize: number, sortBy: string, sortDirection: string,
-                         pageNumber: number): Promise<DeviceType[]> {
-        const filter = searchNameTermFilter(searchNameTerm)
-        const sortedDevices = await devicesCollection.find(filter)
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
-            .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
-            .toArray()
-        return (sortedDevices)
+    async findAllDevices(): Promise<any> {
+        return devicesCollection.find().toArray()
+
     }
 
     async getDevicesCount(searchNameTerm?: string) {
         const filter = searchNameTermFilter(searchNameTerm)
         return await devicesCollection.countDocuments(filter)
+    }
+
+    async deleteAllDevicesExcludeCurrent(userId: string, deviceId: string) {
+        return devicesCollection.deleteMany({userId, deviceId})
+    }
+
+    async deleteDeviceByDeviceId(deviceId: string) {
+        const result = await devicesCollection.deleteOne({deviceId: deviceId})
+        return result.deletedCount === 1
     }
 }

@@ -27,7 +27,7 @@ app.use('/auth', authRouter)
 app.use('/testing', testingRouter)
 app.use('/comments', commentsRouter)
 app.use('/email', emailRouter)
-app.use('/devices', devicesRouter)
+app.use('/security', devicesRouter)
 
 
 const startApp = async () => {

@@ -12,8 +12,10 @@ export class BlogsService {
 
     async findAllBlogs(searchNameTerm: any, pageSize: number, sortBy: string, sortDirection: string,
                        pageNumber: number): Promise<PaginationType> {
-        const allBlogs = await this.blogsRepository.findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
-        const totalCount = await this.blogsRepository.getBlogsCount(searchNameTerm)
+        const allBlogs = await this.blogsRepository
+            .findAllBlogs(searchNameTerm, pageSize, sortBy, sortDirection, pageNumber)
+        const totalCount = await this.blogsRepository
+            .getBlogsCount(searchNameTerm)
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {
             pagesCount: pagesCount === 0 ? 1 : pagesCount,

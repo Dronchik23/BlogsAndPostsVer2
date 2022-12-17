@@ -21,9 +21,11 @@ authRouter.post('/login', authController.login.bind(authController))
 
 authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
 
-authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
+authRouter.post('/registration-confirmation', isCodeAlreadyConfirmed, codeValidation, inputValidationMiddleware,
+    authController.registrationConfirmation.bind(authController))
 
-authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware, authController.registration.bind(authController))
+authRouter.post('/registration', emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
+    authController.registration.bind(authController))
 
 authRouter.post('/registration-email-resending', emailValidation, isEmailExist, isEmailAlreadyConfirmed,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
