@@ -18,10 +18,10 @@ export class DevicesService {
         const lastActiveDate = new Date().toISOString()
 
         const device = new DeviceType(
-            ip,
-            title,
-            lastActiveDate,
             deviceId,
+            ip,
+            lastActiveDate,
+            title,
             userId
         )
         console.log(userId)
