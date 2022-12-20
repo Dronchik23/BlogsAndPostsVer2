@@ -55,4 +55,8 @@ export class DevicesRepository {
     async findAndDeleteDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
        return  devicesCollection.deleteOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
     }
+
+    async deleteAllDevices() {
+        await devicesCollection.deleteMany({})
+    }
 }

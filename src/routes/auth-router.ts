@@ -14,6 +14,11 @@ import {AuthController} from "../controller/auth-controller";
 import rateLimit from 'express-rate-limit'
 
 
+const  ExpressBrute = require('express-brute')
+
+const store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
+const bruteforce = new ExpressBrute(store);
+
 const limiter = rateLimit({
     windowMs: 10000, max: 5,
 })
@@ -23,7 +28,9 @@ const authController = container.resolve(AuthController)
 export const authRouter = Router({})
 
 
-authRouter.post('/login', limiter, authController.login.bind(authController))
+authRouter.post('/login',
+    limiter,
+    authController.login.bind(authController))
 
 authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
 
