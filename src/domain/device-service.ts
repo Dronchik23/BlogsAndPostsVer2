@@ -1,4 +1,3 @@
-
 import {DeviceType, PaginationType} from "../types/types";
 import {injectable} from "inversify";
 import {DevicesRepository} from "../repositories/devices-repository";
@@ -12,21 +11,15 @@ export class DevicesService {
                 protected jwtService: JwtService) {
     }
 
-    async createDevice(userId: string, ip: string, title: string) {
-
-        const deviceId = randomUUID()
-        const lastActiveDate = new Date().toISOString()
-
+    async createDevice(ip: string, title: string, lastActiveDate: string, deviceId: string, userId: string) {
         const device = new DeviceType(
-            deviceId,
             ip,
-            lastActiveDate,
             title,
+            lastActiveDate,
+            deviceId,
             userId
         )
-        console.log(userId)
-        await this.devicesRepository.saveNewDevice(device)
-        return deviceId
+        return this.devicesRepository.saveNewDevice(device)
     }
 
     async rewriteIssueAt(deviceId: string, data: string) {
@@ -36,7 +29,7 @@ export class DevicesService {
     }
 
     async findAllDevices(): Promise<any> {
-       return await this.devicesRepository.findAllDevices()
+        return await this.devicesRepository.findAllDevices()
     }
 
     async deleteAllDevicesExcludeCurrent(userId: string, currentDevice: string) {
@@ -45,5 +38,19 @@ export class DevicesService {
 
     async deleteDeviceByDeviceId(deviceId: string) {
         return await this.devicesRepository.deleteDeviceByDeviceId(deviceId)
+    }
+
+    async findAndDeleteDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
+        const device = await this.devicesRepository.findDeviceByDeviceIdUserIdAndDate(deviceId, userId, lastActiveDate)
+        if (!device) return null
+        return this.devicesRepository.findAndDeleteDeviceByDeviceIdUserIdAndDate(deviceId, userId, lastActiveDate)
+    }
+
+    async findDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
+        return this.devicesRepository.findDeviceByDeviceIdUserIdAndDate(deviceId, userId, lastActiveDate)
+    }
+
+    async updateLastActiveDateByDevice(deviceId: string, userId: string, newLastActiveDate: string) {
+        return this.devicesRepository.updateLastActiveDateByDevice(deviceId, userId, newLastActiveDate)
     }
 }

@@ -10,13 +10,13 @@ export class DevicesController {
     constructor(@inject(DevicesService) protected devicesService: DevicesService) {
     }
 
-    async createDevice(req: Request, res: Response) {
-        const ip = req.ip
-        const title = req.headers["user-agent"]
-        const refreshToken = req.cookies.refreshToken
-        await this.devicesService.createDevice(ip, title!, refreshToken)
-        return res.status(201)
-    }
+    // async createDevice(req: Request, res: Response) {
+    //     const ip = req.ip
+    //     const title = req.headers["user-agent"]
+    //     const refreshToken = req.cookies.refreshToken
+    //     await this.devicesService.createDevice(ip, title!, refreshToken)
+    //     return res.status(201)
+    // }
 
     async getAllDevices(req: Request, res: Response) {
         const allDevices = await this.devicesService.findAllDevices()
@@ -24,9 +24,9 @@ export class DevicesController {
     }
 
     async deleteAllDevicesExcludeCurrent(req: Request, res: Response) {
-        const currentDevice = req.deviceId!
+        const deviceId = req.deviceId!
         const userId = req.userId!
-        const isDeleted = await this.devicesService.deleteAllDevicesExcludeCurrent(userId, currentDevice)
+        const isDeleted = await this.devicesService.deleteAllDevicesExcludeCurrent(userId, deviceId)
         if (isDeleted) {
             res.sendStatus(204)
         } else {

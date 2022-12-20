@@ -81,10 +81,11 @@ export class EmailConfirmationType {
 }
 
 export class DeviceType {
-    constructor(public deviceId: string,
+    constructor(
                 public ip: string,
-                public lastActiveDate: string,
                 public title: string,
+                public lastActiveDate: string,
+                public deviceId: string,
                 public userId: string
     ) {
     }
@@ -96,12 +97,20 @@ export type RequestWithQuery<T> = Request<{}, {}, {}, T>
 export type RequestWithParams<T> = Request<T>
 export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
 
+
+
+export type JWTPayloadType = {
+    userId: string
+    deviceId: string
+    iat: number}
+
 declare global {
     namespace Express {
         export interface Request {
             user: UserViewModel | null
             userId: string | null
             deviceId: string | null
+            jwtPayload: JWTPayloadType | null
         }
     }
 }

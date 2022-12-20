@@ -1,7 +1,7 @@
 import {AuthService} from "../domain/auth-service";
 import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
-import {TokenType} from "../types/types";
+import {JWTPayloadType, TokenType} from "../types/types";
 import {inject, injectable} from "inversify";
 import {JwtService} from "../application/jwt-service";
 import {DevicesService} from "../domain/device-service";
@@ -12,7 +12,7 @@ export class AuthController {
     constructor(@inject(AuthService) protected authService: AuthService,
                 @inject(UsersService) protected usersService: UsersService,
                 @inject(JwtService) protected jwtService: JwtService,
-                @inject(DevicesService) protected deviceService: DevicesService
+                @inject(DevicesService) protected devicesService: DevicesService
     ) {
     }
 
@@ -21,29 +21,28 @@ export class AuthController {
         const title = req.headers["user-agent"]!
         const loginOrEmail = req.body.loginOrEmail
         const password = req.body.password
-        const tokens = await this.authService.login(loginOrEmail, password, ip, title )
+        const tokens = await this.authService.login(loginOrEmail, password, ip, title)
         if (!tokens) return res.sendStatus(401)
         res.cookie('refreshToken', tokens.refreshToken, {
-                httpOnly: true,
-                secure: true,
-            })
+            httpOnly: true,
+            secure: false,
+        })
         return res.send({accessToken: tokens.accessToken})
     }
 
     async refreshToken(req: Request, res: Response) {
-        const userId = req.userId!
-        const deviceId = req.deviceId!
-        const date = new Date().toISOString()
-        const newIssueAt = await this.deviceService.rewriteIssueAt(deviceId, date)
-        const token: TokenType = await this.jwtService.createJWT(userId, deviceId)
+        const jwtPayload = req.jwtPayload!
+        const tokens: TokenType | null = await this.authService.refreshToken(jwtPayload)
+        if (!tokens) return res.sendStatus(401)
         return res
             .status(200)
-            .cookie('refreshToken', token.refreshToken, {
+            .cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
-                secure: true,
+                secure: false,
             })
-            .send({accessToken: token.accessToken})
+            .send({accessToken: tokens.accessToken})
     }
+
 
     async registrationConfirmation(req: Request, res: Response) {
         const result = await this.authService.confirmEmail(req.body.code)
@@ -88,6 +87,16 @@ export class AuthController {
     }
 
     async logout(req: Request, res: Response) {
-        return res.sendStatus(204)
+        const jwtPayload = req.jwtPayload!
+        const lastActiveDate = new Date(jwtPayload.iat * 1000).toISOString()
+        const device = await this.devicesService
+            .findAndDeleteDeviceByDeviceIdUserIdAndDate(jwtPayload.deviceId, jwtPayload.userId, lastActiveDate)
+        if (!device) {
+            return res.sendStatus(401)
+        }
+        else  {
+            return res.sendStatus(204)
+        }
+
     }
 }

@@ -1,23 +1,17 @@
 import {container} from "../composition-root";
 import {DevicesController} from "../controller/devices-controller";
 import {Router} from "express";
-import rateLimit from 'express-rate-limit'
-
-
-const limiter = rateLimit({
-    windowMs: 10000,
-    max: 5
-})
+import {refreshTokenMiddleware} from "../middlewares/refresh-token-middleware";
 
 
 const devicesController = container.resolve(DevicesController)
 
 export const devicesRouter = Router({})
 
-devicesRouter.get('/devices', limiter, devicesController.getAllDevices.bind(devicesController))
+devicesRouter.get('/devices', devicesController.getAllDevices.bind(devicesController))
 
-devicesRouter.delete('/devices', limiter, devicesController.deleteAllDevicesExcludeCurrent.bind(devicesController))
+devicesRouter.delete('/devices', devicesController.deleteAllDevicesExcludeCurrent.bind(devicesController))
 
-devicesRouter.delete('/devices/:deviceId', limiter, devicesController
+devicesRouter.delete('/devices/:deviceId', devicesController
     .deleteDeviceByDeviceId.bind(devicesController))
 

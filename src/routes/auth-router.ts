@@ -15,8 +15,7 @@ import rateLimit from 'express-rate-limit'
 
 
 const limiter = rateLimit({
-    windowMs: 10000,
-    max: 5
+    windowMs: 10000, max: 5,
 })
 
 const authController = container.resolve(AuthController)
@@ -31,8 +30,8 @@ authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refresh
 authRouter.post('/registration-confirmation', limiter, isCodeAlreadyConfirmed, codeValidation,
     inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
 
-authRouter.post('/registration', limiter, emailValidation, loginValidation, passwordValidation, inputValidationMiddleware,
-    authController.registration.bind(authController))
+authRouter.post('/registration', limiter, emailValidation, loginValidation, passwordValidation,
+    inputValidationMiddleware, authController.registration.bind(authController))
 
 authRouter.post('/registration-email-resending', limiter, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))

@@ -1,4 +1,4 @@
-import {EmailConfirmationType} from "../types/types";
+import {EmailConfirmationType, JWTPayloadType} from "../types/types";
 import bcrypt from "bcrypt";
 import {EmailService} from "./email-service";
 import {randomUUID} from "crypto";
@@ -22,9 +22,11 @@ export class AuthService {
         const user = await this.checkCredentials(loginOrEmail, password)
         if (!user) return null
         const userId = (user._id).toString()
-        const deviceId = await this.devicesService.createDevice(userId, ip, title)
-        if (!deviceId) return null
-        return this.jwtService.createJWT(user.id, deviceId)
+        const deviceId = randomUUID()
+        const {accessToken, refreshToken} = this.jwtService.createJWT(userId, deviceId)
+        const lastActiveDate = this.jwtService.getLastActiveDate(refreshToken)
+        await this.devicesService.createDevice(ip, title, lastActiveDate, deviceId, userId)
+        return {accessToken, refreshToken}
     }
 
     private async checkCredentials(loginOrEmail: string, password: string): Promise<any> {
@@ -60,5 +62,17 @@ export class AuthService {
         await this.usersRepository.updateConfirmationCodeByUserId(user._id, newCode)
         await this.emailService.resendingEmailMessage(user.accountData.email, newCode)
         return true
+    }
+
+    async refreshToken(jwtPayload: JWTPayloadType) {
+        const lastActiveDate = new Date(jwtPayload.iat * 1000).toISOString()
+        const device = await this.devicesService
+            .findDeviceByDeviceIdUserIdAndDate(jwtPayload.deviceId, jwtPayload.userId, lastActiveDate)
+        if (!device) return null
+        const {accessToken, refreshToken} = this.jwtService.createJWT(jwtPayload.userId, jwtPayload.deviceId)
+        const newLastActiveDate = this.jwtService.getLastActiveDate(refreshToken)
+        await this.devicesService
+            .updateLastActiveDateByDevice(jwtPayload.deviceId, jwtPayload.userId, newLastActiveDate)
+        return {accessToken, refreshToken}
     }
 }

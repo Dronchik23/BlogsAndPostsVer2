@@ -34,12 +34,25 @@ export class DevicesRepository {
         return await devicesCollection.countDocuments(filter)
     }
 
-    async deleteAllDevicesExcludeCurrent(userId: string, deviceId: string) {
-        return devicesCollection.deleteMany({userId, deviceId})
+    async deleteAllDevicesExcludeCurrent(userId: string, deviceId: any) {
+        const result = await  devicesCollection.deleteMany({userId: userId, deviceId: {$ne: deviceId}})
+        return result.deletedCount === 1
     }
 
     async deleteDeviceByDeviceId(deviceId: string) {
         const result = await devicesCollection.deleteOne({deviceId: deviceId})
         return result.deletedCount === 1
+    }
+
+    async findDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
+        return await devicesCollection.findOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
+    }
+
+    async updateLastActiveDateByDevice(deviceId: string, userId: string, newLastActiveDate: string) {
+        return await devicesCollection.updateOne({deviceId: deviceId, userId: userId}, {$set: {lastActiveDate: newLastActiveDate}})
+    }
+
+    async findAndDeleteDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
+       return  devicesCollection.deleteOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
     }
 }
