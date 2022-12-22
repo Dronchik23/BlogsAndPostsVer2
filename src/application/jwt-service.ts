@@ -10,8 +10,8 @@ export class JwtService {
     }
 
     createJWT(userId: string, deviceId: string) {
-        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '10s'})
-        const refreshToken = jwt.sign({userId, deviceId}, settings.JWT_REFRESH_SECRET, {expiresIn: '20s'})
+        const accessToken = jwt.sign({userId}, settings.JWT_SECRET, {expiresIn: '20m'})
+        const refreshToken = jwt.sign({userId, deviceId}, settings.JWT_REFRESH_SECRET, {expiresIn: '20m'})
         return {accessToken, refreshToken}
     }
 
@@ -38,6 +38,7 @@ export class JwtService {
         try {
             return jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET)
         } catch (error) {
+            console.log('getPayloadByRefreshToken Error: '+error)
             return null
         }
     }

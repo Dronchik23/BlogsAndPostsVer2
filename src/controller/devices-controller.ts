@@ -24,9 +24,12 @@ export class DevicesController {
     }
 
     async deleteAllDevicesExcludeCurrent(req: Request, res: Response) {
-        const deviceId = req.deviceId!
-        const userId = req.userId!
+        const deviceId = req.jwtPayload!.deviceId!
+        console.log('deviceId: '+deviceId)
+        const userId = req.jwtPayload!.userId!
+        console.log('userId: '+userId)
         const isDeleted = await this.devicesService.deleteAllDevicesExcludeCurrent(userId, deviceId)
+        console.log('isDeleted: '+isDeleted)
         if (isDeleted) {
             res.sendStatus(204)
         } else {

@@ -11,8 +11,10 @@ const jwtService = container.resolve(JwtService)
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
+    console.log(`refreshToken: `+ refreshToken);
     if (!refreshToken) return res.sendStatus(401)
     const payload : any = await jwtService.getPayloadByRefreshToken(refreshToken)
+    console.dir('payload: '+ payload)
     if (!payload) return res.sendStatus(401)
     const userId = payload.userId
     const user = await usersService.getUserByUserId(userId)

@@ -36,7 +36,7 @@ export class DevicesRepository {
 
     async deleteAllDevicesExcludeCurrent(userId: string, deviceId: any) {
         const result = await  devicesCollection.deleteMany({userId: userId, deviceId: {$ne: deviceId}})
-        return result.deletedCount === 1
+        return result.acknowledged
     }
 
     async deleteDeviceByDeviceId(deviceId: string) {

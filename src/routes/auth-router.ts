@@ -17,7 +17,7 @@ import rateLimit from 'express-rate-limit'
 
 const limiter = rateLimit({
     windowMs: 10000,
-    max: 4,
+    max: 5,
     statusCode: 429
 })
 
