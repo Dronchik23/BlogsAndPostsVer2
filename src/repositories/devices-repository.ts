@@ -67,4 +67,8 @@ export class DevicesRepository {
             title
         })
     }
+
+    async findDeviceByDeviceIdAndDate(deviceId: string, lastActiveDate: string) {
+        return devicesCollection.findOne({deviceId, lastActiveDate})
+    }
 }

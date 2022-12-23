@@ -8,7 +8,8 @@ import {usersRouter} from "../routes/users-router";
 @injectable()
 export class DevicesController {
 
-    constructor(@inject(DevicesService) protected devicesService: DevicesService) {
+    constructor(@inject(DevicesService) protected devicesService: DevicesService,
+    ) {
     }
 
     // async createDevice(req: Request, res: Response) {
@@ -40,6 +41,10 @@ export class DevicesController {
     }
 
     async deleteDeviceByDeviceId(req: Request, res: Response) {
+        const {userId, iat} = req.jwtPayload!
+        const device = await this.devicesService.findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat*1000).toISOString())
+        if (!device) return res.sendStatus(404)
+        if (device.userId !== userId) return res.sendStatus(403)
         const isDeleted = await this.devicesService.deleteDeviceByDeviceId(req.params.deviceId)
         if (isDeleted) {
             res.sendStatus(204)
