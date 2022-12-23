@@ -59,4 +59,12 @@ export class DevicesRepository {
     async deleteAllDevices() {
         await devicesCollection.deleteMany({})
     }
+
+    findExistanceDeviceForUser(userId: string, ip: string, title: string) {
+        return devicesCollection.countDocuments({
+            userId,
+            ip,
+            title
+        })
+    }
 }

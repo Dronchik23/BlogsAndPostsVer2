@@ -19,6 +19,11 @@ export type TokenType = {
 export type TokenBlackListType = {
     refreshToken: string
 }
+export type JWTPayloadType = {
+    userId: string
+    deviceId: string
+    iat: number}
+
 
 // classes
 export class BlogDBType {
@@ -99,10 +104,7 @@ export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
 
 
 
-export type JWTPayloadType = {
-    userId: string
-    deviceId: string
-    iat: number}
+
 
 declare global {
     namespace Express {

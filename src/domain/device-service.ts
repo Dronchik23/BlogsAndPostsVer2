@@ -53,4 +53,18 @@ export class DevicesService {
     async updateLastActiveDateByDevice(deviceId: string, userId: string, newLastActiveDate: string) {
         return this.devicesRepository.updateLastActiveDateByDevice(deviceId, userId, newLastActiveDate)
     }
+
+    async checkDeviceExistance(userId: string, ip: string, title: string) {
+        const existsDeviceId = await this.devicesRepository.findExistanceDeviceForUser(userId, ip, title)
+        if(existsDeviceId) {
+
+        }else{
+
+        }
+        return existsDeviceId
+    }
+
+    //async findDeviceByDeviceId(device) {
+        
+    //}
 }
