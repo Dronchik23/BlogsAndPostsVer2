@@ -18,16 +18,14 @@ export class AuthService {
     ) {
     }
 
-    async login (loginOrEmail: string, password: string, ip: string, title: string, deviceId: any ) {
+    async login (loginOrEmail: string, password: string, ip: string, title: string ) {
         const user = await this.checkCredentials(loginOrEmail, password)
         if (!user) return null
         const userId = (user._id).toString()
-
-
+        const deviceId = randomUUID()
         //TODO Если девайс уже есть - обновить время в коллекции девайсов
         //TODO Если девайса такого нет то создаем...
         //TODO existsDeviceIdOrNull, перенести создание deviceId в device сервис. \/
-        //const deviceId = randomUUID()
         console.log('login userId:' + userId)
         console.log('login deviceId:' + deviceId)
         const {accessToken, refreshToken} = this.jwtService.createJWT(userId, deviceId)
