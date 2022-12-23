@@ -26,7 +26,7 @@ export class AuthController {
         if (!tokens) return res.sendStatus(401)
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,
-            secure: false,
+            secure: true,
         })
         return res.send({accessToken: tokens.accessToken})
     }
@@ -39,7 +39,7 @@ export class AuthController {
             .status(200)
             .cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
-                secure: false,
+                secure: true,
             })
             .send({accessToken: tokens.accessToken})
     }
