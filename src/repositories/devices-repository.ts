@@ -24,8 +24,8 @@ export class DevicesRepository {
 
     }
 
-    async findAllDevices(): Promise<any> {
-        return devicesCollection.find({}, {projection: {_id: false, userId: false}}).toArray()
+    async findAllDevicesByUserId(userId: string): Promise<any> {
+        return devicesCollection.find({userId}, {projection: {_id: false, userId: false}}).toArray()
 
     }
 

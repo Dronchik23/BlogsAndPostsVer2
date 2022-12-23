@@ -1,6 +1,7 @@
 import {inject, injectable} from "inversify";
 import {DevicesService} from "../domain/device-service";
 import {Request, Response} from "express";
+import {usersRouter} from "../routes/users-router";
 
 
 
@@ -19,7 +20,8 @@ export class DevicesController {
     // }
 
     async getAllDevices(req: Request, res: Response) {
-        const allDevices = await this.devicesService.findAllDevices()
+        const userId = req.user!.id
+        const allDevices = await this.devicesService.findAllDevicesByUserId(userId)
         return res.send(allDevices)
     }
 

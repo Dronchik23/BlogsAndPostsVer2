@@ -13,13 +13,16 @@ import {container} from "../composition-root";
 import {AuthController} from "../controller/auth-controller";
 import rateLimit from 'express-rate-limit'
 
+const opt = () => {
+    console.log('rate limiter')
+    return {
+        windowMs: 10000,
+        max: 5,
+        statusCode: 429
+    }
+}
 
-
-const limiter = rateLimit({
-    windowMs: 10000,
-    max: 5,
-    statusCode: 429
-})
+const limiter = rateLimit(opt())
 
 const authController = container.resolve(AuthController)
 

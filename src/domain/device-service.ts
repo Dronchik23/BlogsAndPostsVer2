@@ -28,8 +28,8 @@ export class DevicesService {
 
     }
 
-    async findAllDevices(): Promise<any> {
-        return await this.devicesRepository.findAllDevices()
+    async findAllDevicesByUserId(userId: string): Promise<any> {
+        return await this.devicesRepository.findAllDevicesByUserId(userId)
     }
 
     async deleteAllDevicesExcludeCurrent(userId: string, currentDevice: string) {
