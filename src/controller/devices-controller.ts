@@ -41,7 +41,8 @@ export class DevicesController {
         // const device = await this.devicesService
         //     .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat * 1000).toISOString())
         // if (!device) return res.sendStatus(404)
-        // if (device!.userId !== userId) return res.sendStatus(403)
+        const userId = req.userId
+        if (userId !== userId) return res.sendStatus(403)
         const isDeleted = await this.devicesService.deleteDeviceByDeviceId(req.params.deviceId)
         if (isDeleted) {
             res.sendStatus(204)

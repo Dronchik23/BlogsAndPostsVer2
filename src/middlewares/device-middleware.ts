@@ -12,7 +12,7 @@ export const deviceMiddleware = async (req: Request, res: Response, next: NextFu
     const device = await devicesService
         .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat * 1000).toISOString())
     if (!device) return res.sendStatus(404)
-    if (device!.userId !== userId) return res.sendStatus(403)
+    if (device!.userId !== req.userId) return res.sendStatus(403)
 
     return next()
 
