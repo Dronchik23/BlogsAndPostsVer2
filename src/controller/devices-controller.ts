@@ -44,8 +44,9 @@ export class DevicesController {
         const {userId, iat} = req.jwtPayload!
         const device = await this.devicesService
             .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat*1000).toISOString())
-        if (!device) return res.sendStatus(403)
-        if (device.userId !== userId) return res.sendStatus(403)
+        if (device!.userId !== userId) return res.sendStatus(403)
+        if (!device) return res.sendStatus(404)
+
         const isDeleted = await this.devicesService.deleteDeviceByDeviceId(req.params.deviceId)
         if (isDeleted) {
             res.sendStatus(204)
