@@ -60,14 +60,6 @@ export class DevicesRepository {
         await devicesCollection.deleteMany({})
     }
 
-    findExistanceDeviceForUser(userId: string, ip: string, title: string) {
-        return devicesCollection.countDocuments({
-            userId,
-            ip,
-            title
-        })
-    }
-
     async findDeviceByDeviceIdAndDate(deviceId: string, lastActiveDate: string) {
         return devicesCollection.findOne({deviceId, lastActiveDate})
     }

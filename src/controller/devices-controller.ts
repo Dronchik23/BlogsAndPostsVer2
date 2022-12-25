@@ -4,7 +4,6 @@ import {Request, Response} from "express";
 import {usersRouter} from "../routes/users-router";
 
 
-
 @injectable()
 export class DevicesController {
 
@@ -28,11 +27,8 @@ export class DevicesController {
 
     async deleteAllDevicesExcludeCurrent(req: Request, res: Response) {
         const deviceId = req.jwtPayload!.deviceId!
-        console.log('deviceId: '+deviceId)
         const userId = req.jwtPayload!.userId!
-        console.log('userId: '+userId)
         const isDeleted = await this.devicesService.deleteAllDevicesExcludeCurrent(userId, deviceId)
-        console.log('isDeleted: '+isDeleted)
         if (isDeleted) {
             res.sendStatus(204)
         } else {
@@ -41,12 +37,11 @@ export class DevicesController {
     }
 
     async deleteDeviceByDeviceId(req: Request, res: Response) {
-        const { iat} = req.jwtPayload!
-        const device = await this.devicesService
-            .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat*1000).toISOString())
-        if (!device) return res.sendStatus(404)
-        if (device!.userId !== req.userId) return res.sendStatus(403)
-
+        // const {userId, iat} = req.jwtPayload!
+        // const device = await this.devicesService
+        //     .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat * 1000).toISOString())
+        // if (!device) return res.sendStatus(404)
+        // if (device!.userId !== userId) return res.sendStatus(403)
         const isDeleted = await this.devicesService.deleteDeviceByDeviceId(req.params.deviceId)
         if (isDeleted) {
             res.sendStatus(204)

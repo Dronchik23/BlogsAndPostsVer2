@@ -23,11 +23,6 @@ export class AuthService {
         if (!user) return null
         const userId = (user._id).toString()
         const deviceId = randomUUID()
-        //TODO Если девайс уже есть - обновить время в коллекции девайсов
-        //TODO Если девайса такого нет то создаем...
-        //TODO existsDeviceIdOrNull, перенести создание deviceId в device сервис. \/
-        console.log('login userId:' + userId)
-        console.log('login deviceId:' + deviceId)
         const {accessToken, refreshToken} = this.jwtService.createJWT(userId, deviceId)
         const lastActiveDate = this.jwtService.getLastActiveDate(refreshToken)
         await this.devicesService.createDevice(ip, title, lastActiveDate, deviceId, userId)
