@@ -35,7 +35,7 @@ export const isEmailAlreadyConfirmed = body('email').custom(async value => {
 })
 export const codeValidation = body('code').isString().trim().notEmpty().isUUID()
 export const isEmailExist = body('email').trim().custom(async value => {
-        const isValidUser = await usersRepository.findByLoginOrEmail(value)
-        if (!isValidUser) throw new Error('E-mail not exist')
+        const isValidUser = await usersRepository.findByEmail(value)
+        console.log(isValidUser)
         return true
 })

@@ -6,7 +6,7 @@ export const emailAdapter = {
             service: 'gmail',
             auth: {
                 user: 'bonjorim@gmail.com',
-                pass: 'blhsntnuzncvxwyb',
+                pass: 'nronmxaommldkjpc',
             },
         });
 
