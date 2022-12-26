@@ -26,7 +26,7 @@ export type JWTPayloadType = {
 export type AttemptsType = {
     ip: string
     url: string
-    attemptsTime: Date
+    attemptsTime: string
 }
 
 

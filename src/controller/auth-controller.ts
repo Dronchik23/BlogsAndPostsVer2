@@ -22,7 +22,6 @@ export class AuthController {
         const loginOrEmail = req.body.loginOrEmail
         const password = req.body.password
         const tokens = await this.authService.login(loginOrEmail, password, ip, title)
-            //console.log("tokens", tokens)
         if (!tokens) return res.sendStatus(401)
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,
