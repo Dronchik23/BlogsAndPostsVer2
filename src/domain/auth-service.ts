@@ -6,6 +6,7 @@ import {UsersRepository} from "../repositories/users-repository";
 import {injectable} from "inversify";
 import {JwtService} from "../application/jwt-service";
 import {DevicesService} from "./device-service";
+import {usersCollection} from "../db";
 
 
 @injectable()
@@ -58,6 +59,8 @@ export class AuthService {
         console.log('resendConfirmationCode => email =>', email)
         const user = await this.usersRepository.findByEmail(email)
         console.log('resendConfirmationCode => user =>', user)
+        const users = await usersCollection.find()
+        console.log('resendConfirmationCode => users =>', users)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
         const newCode = randomUUID()
