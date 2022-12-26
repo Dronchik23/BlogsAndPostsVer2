@@ -24,5 +24,6 @@ export class AttemptsRepository {
         })
         return result
     }
-
 }
+
+export const attemptsRepository = new AttemptsRepository()

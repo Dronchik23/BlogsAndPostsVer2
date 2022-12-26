@@ -20,18 +20,18 @@ export const authRouter = Router({})
 
 
 authRouter.post('/login',
-    attemptsControlMiddleware.checkAttempts,
+    attemptsControlMiddleware,
     authController.login.bind(authController))
 
 authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
 
-authRouter.post('/registration-confirmation', attemptsControlMiddleware.checkAttempts, isCodeAlreadyConfirmed, codeValidation,
+authRouter.post('/registration-confirmation', attemptsControlMiddleware, isCodeAlreadyConfirmed, codeValidation,
     inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
 
-authRouter.post('/registration', attemptsControlMiddleware.checkAttempts, emailValidation, loginValidation, passwordValidation,
+authRouter.post('/registration', attemptsControlMiddleware, emailValidation, loginValidation, passwordValidation,
     inputValidationMiddleware, authController.registration.bind(authController))
 
-authRouter.post('/registration-email-resending', attemptsControlMiddleware.checkAttempts, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+authRouter.post('/registration-email-resending', attemptsControlMiddleware, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
 
 authRouter.get('/me', authJWTMiddleware, authController.me.bind(authController))
