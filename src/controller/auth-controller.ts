@@ -55,7 +55,7 @@ export class AuthController {
     }
 
     async registration(req: Request, res: Response) {
-        const email = await this.usersService.findUserByLoginOrEmail(req.body.email)
+        const email = await this.usersService.findUserByEmail(req.body.email)
         if (email) {
             return res.status(400).send({
                 "errorsMessages": [
@@ -66,6 +66,7 @@ export class AuthController {
                 ]
             })
         }
+        return res.sendStatus(204)
 
     }
 

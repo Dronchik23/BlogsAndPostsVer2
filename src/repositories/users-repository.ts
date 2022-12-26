@@ -67,6 +67,10 @@ export class UsersRepository {
         })
         return user
     }
+    async findByEmail(email: string) {
+        return await usersCollection.findOne({email: email})
+
+    }
     async findUserByConfirmationCode(code: string) {
         const user = await usersCollection.findOne({"emailConfirmation.confirmationCode": code})
         return user

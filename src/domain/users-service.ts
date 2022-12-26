@@ -71,7 +71,13 @@ export class UsersService {
     }
 
     async findUserByLoginOrEmail(email: string) {
-        return await this.usersRepository.findByLoginOrEmail(email)
+        return await this.usersRepository.findByEmail(email)
     }
+
+    async findUserByEmail(email: string) {
+        return await this.usersRepository.findByEmail(email)
+    }
+
+
 }
 
