@@ -21,8 +21,8 @@ export class AuthController {
         const title = req.headers["user-agent"]!
         const loginOrEmail = req.body.loginOrEmail
         const password = req.body.password
-        console.log(  'auth controller => login => auth', req.headers.authorization)
         const tokens = await this.authService.login(loginOrEmail, password, ip, title)
+            //console.log("tokens", tokens)
         if (!tokens) return res.sendStatus(401)
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,
