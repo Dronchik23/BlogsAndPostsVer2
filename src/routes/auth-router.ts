@@ -31,7 +31,7 @@ authRouter.post('/registration-confirmation', attemptsControlMiddleware, isCodeA
 authRouter.post('/registration', attemptsControlMiddleware, emailValidation, loginValidation, passwordValidation,
     inputValidationMiddleware, authController.registration.bind(authController))
 
-authRouter.post('/registration-email-resending', attemptsControlMiddleware, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+authRouter.post('/registration-email-resending', attemptsControlMiddleware, emailValidation,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
 
 authRouter.get('/me', authJWTMiddleware, authController.me.bind(authController))

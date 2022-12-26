@@ -70,12 +70,13 @@ export class AuthController {
     }
 
     async registrationEmailResending(req: Request, res: Response) {
-        const result = await this.authService.resendConfirmationCode(req.body.email)
-        if (result) {
-            return res.sendStatus(204)
-        } else {
-            return res.sendStatus(400)
-        }
+        await this.authService.resendConfirmationCode(req.body.email)
+        return res.sendStatus(204)
+        // if (result) {
+        //     return res.sendStatus(204)
+        // } else {
+        //     return res.sendStatus(400)
+        // }
     }
 
     async me(req: Request, res: Response) {
