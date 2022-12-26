@@ -59,7 +59,7 @@ export class AuthService {
         console.log('resendConfirmationCode => email =>', email)
         const user = await this.usersRepository.findByEmail(email)
         console.log('resendConfirmationCode => user =>', user)
-        const users = await usersCollection.find()
+        const users = await usersCollection.find({}).toArray()
         console.log('resendConfirmationCode => users =>', users)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
