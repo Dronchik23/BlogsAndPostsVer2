@@ -60,7 +60,7 @@ export class DevicesRepository {
         await devicesCollection.deleteMany({})
     }
 
-    async findDeviceByDeviceIdAndDate(deviceId: string, lastActiveDate: string) {
-        return devicesCollection.findOne({deviceId, lastActiveDate})
+    async findDeviceByDeviceIdAndDate(deviceId: string) {
+        return devicesCollection.findOne({deviceId})
     }
 }

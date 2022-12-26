@@ -7,12 +7,11 @@ const devicesService = new DevicesService(new DevicesRepository, new JwtService)
 
 
 export const deviceMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-
-    const {userId, iat} = req.jwtPayload!
     const device = await devicesService
-        .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat * 1000).toISOString())
+        .findDeviceByDeviceIdAndDate(req.params.deviceId)
     if (!device) return res.sendStatus(404)
-    if (device!.userId !== req.userId) return res.sendStatus(403)
+    if (device!.userId !== req.user!.id) return res.sendStatus(403)
+
 
     return next()
 

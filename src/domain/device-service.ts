@@ -50,8 +50,8 @@ export class DevicesService {
         return this.devicesRepository.findDeviceByDeviceIdUserIdAndDate(deviceId, userId, lastActiveDate)
     }
 
-    async findDeviceByDeviceIdAndDate(deviceId: string, lastActiveDate: string) {
-        return this.devicesRepository.findDeviceByDeviceIdAndDate(deviceId, lastActiveDate)
+    async findDeviceByDeviceIdAndDate(deviceId: string) {
+        return this.devicesRepository.findDeviceByDeviceIdAndDate(deviceId)
     }
 
     async updateLastActiveDateByDevice(deviceId: string, userId: string, newLastActiveDate: string) {
