@@ -1,23 +1,14 @@
 import {inject, injectable} from "inversify";
 import {DevicesService} from "../domain/device-service";
 import {Request, Response} from "express";
-import {usersRouter} from "../routes/users-router";
+
 
 
 @injectable()
 export class DevicesController {
 
     constructor(@inject(DevicesService) protected devicesService: DevicesService,
-    ) {
-    }
-
-    // async createDevice(req: Request, res: Response) {
-    //     const ip = req.ip
-    //     const title = req.headers["user-agent"]
-    //     const refreshToken = req.cookies.refreshToken
-    //     await this.devicesService.createDevice(ip, title!, refreshToken)
-    //     return res.status(201)
-    // }
+    ) {}
 
     async getAllDevices(req: Request, res: Response) {
         const userId = req.user!.id
@@ -37,9 +28,9 @@ export class DevicesController {
     }
 
     async deleteDeviceByDeviceId(req: Request, res: Response) {
-        const {userId, iat} = req.jwtPayload!
+        const userId = req.jwtPayload!
         const device = await this.devicesService
-            .findDeviceByDeviceIdAndDate(req.params.deviceId, new Date(iat * 1000).toISOString())
+            .findDeviceByDeviceIdAndDate(req.params.deviceId)
         if (!device) return res.sendStatus(404)
         if (userId !== userId) return res.sendStatus(403)
         const isDeleted = await this.devicesService.deleteDeviceByDeviceId(req.params.deviceId)
@@ -50,3 +41,5 @@ export class DevicesController {
         }
     }
 }
+
+// new Date(iat * 1000).toISOString()

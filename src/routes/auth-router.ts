@@ -11,18 +11,8 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {refreshTokenMiddleware} from "../middlewares/refresh-token-middleware";
 import {container} from "../composition-root";
 import {AuthController} from "../controller/auth-controller";
-import rateLimit from 'express-rate-limit'
+import {attemptsControlMiddleware} from "../middlewares/attempts-control-middleware";
 
-const opt = () => {
-    console.log('rate limiter')
-    return {
-        windowMs: 10000,
-        max: 5,
-        statusCode: 429
-    }
-}
-
-const limiter = rateLimit(opt())
 
 const authController = container.resolve(AuthController)
 
@@ -30,18 +20,18 @@ export const authRouter = Router({})
 
 
 authRouter.post('/login',
-    limiter,
+    attemptsControlMiddleware.checkAttempts,
     authController.login.bind(authController))
 
 authRouter.post('/refresh-token', refreshTokenMiddleware, authController.refreshToken.bind(authController))
 
-authRouter.post('/registration-confirmation', limiter, isCodeAlreadyConfirmed, codeValidation,
+authRouter.post('/registration-confirmation', attemptsControlMiddleware.checkAttempts, isCodeAlreadyConfirmed, codeValidation,
     inputValidationMiddleware, authController.registrationConfirmation.bind(authController))
 
-authRouter.post('/registration', limiter, emailValidation, loginValidation, passwordValidation,
+authRouter.post('/registration', attemptsControlMiddleware.checkAttempts, emailValidation, loginValidation, passwordValidation,
     inputValidationMiddleware, authController.registration.bind(authController))
 
-authRouter.post('/registration-email-resending', limiter, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
+authRouter.post('/registration-email-resending', attemptsControlMiddleware.checkAttempts, emailValidation, isEmailExist, isEmailAlreadyConfirmed,
     inputValidationMiddleware, authController.registrationEmailResending.bind(authController))
 
 authRouter.get('/me', authJWTMiddleware, authController.me.bind(authController))

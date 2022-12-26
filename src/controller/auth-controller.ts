@@ -1,7 +1,7 @@
 import {AuthService} from "../domain/auth-service";
 import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
-import {DeviceType, JWTPayloadType, TokenType} from "../types/types";
+import {TokenType} from "../types/types";
 import {inject, injectable} from "inversify";
 import {JwtService} from "../application/jwt-service";
 import {DevicesService} from "../domain/device-service";

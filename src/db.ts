@@ -1,5 +1,6 @@
 import {MongoClient} from 'mongodb'
 import {
+    AttemptsType,
     BlogDBType,
     CommentDBType, DeviceType,
     PostDBType,
@@ -19,6 +20,7 @@ export const usersCollection = db.collection<UserDBType>("users")
 export const commentsCollection = db.collection<CommentDBType>("comments")
 export const tokensBlackListCollection = db.collection<TokenBlackListType>('tokensBlackList')
 export const devicesCollection = db.collection<DeviceType>('devices')
+export const attemptsCollection = db.collection('attempts')
 
 export async function runDb() {
     try {

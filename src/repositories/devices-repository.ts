@@ -1,5 +1,5 @@
-import { devicesCollection} from "../db";
-import { DeviceType} from "../types/types";
+import {devicesCollection} from "../db";
+import {DeviceType} from "../types/types";
 import {injectable} from "inversify";
 import {Filter} from "mongodb";
 
@@ -14,14 +14,8 @@ export class DevicesRepository {
         return devicesCollection.insertOne(device)
     }
 
-    async findOneByDeviceAndUserId(deviceId: string, userId: string) {
-        return devicesCollection.findOne({deviceId, userId})
-    }
-
     async rewriteIssueAt(deviceId: string, data: string) {
         return devicesCollection.updateOne({deviceId}, {$set: {lastActiveDate: data}})
-
-
     }
 
     async findAllDevicesByUserId(userId: string): Promise<any> {
@@ -29,13 +23,8 @@ export class DevicesRepository {
 
     }
 
-    async getDevicesCount(searchNameTerm?: string) {
-        const filter = searchNameTermFilter(searchNameTerm)
-        return await devicesCollection.countDocuments(filter)
-    }
-
     async deleteAllDevicesExcludeCurrent(userId: string, deviceId: any) {
-        const result = await  devicesCollection.deleteMany({userId: userId, deviceId: {$ne: deviceId}})
+        const result = await devicesCollection.deleteMany({userId: userId, deviceId: {$ne: deviceId}})
         return result.acknowledged
     }
 
@@ -45,15 +34,17 @@ export class DevicesRepository {
     }
 
     async findDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
-        return await devicesCollection.findOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
+        return await devicesCollection
+            .findOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
     }
 
     async updateLastActiveDateByDevice(deviceId: string, userId: string, newLastActiveDate: string) {
-        return await devicesCollection.updateOne({deviceId: deviceId, userId: userId}, {$set: {lastActiveDate: newLastActiveDate}})
+        return await devicesCollection
+            .updateOne({deviceId: deviceId, userId: userId}, {$set: {lastActiveDate: newLastActiveDate}})
     }
 
     async findAndDeleteDeviceByDeviceIdUserIdAndDate(deviceId: string, userId: string, lastActiveDate: string) {
-       return  devicesCollection.deleteOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
+        return devicesCollection.deleteOne({deviceId: deviceId, userId: userId, lastActiveDate: lastActiveDate})
     }
 
     async deleteAllDevices() {

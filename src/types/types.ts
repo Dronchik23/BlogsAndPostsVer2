@@ -23,6 +23,11 @@ export type JWTPayloadType = {
     userId: string
     deviceId: string
     iat: number}
+export type AttemptsType = {
+    ip: string
+    url: string
+    attemptsTime: Date
+}
 
 
 // classes
