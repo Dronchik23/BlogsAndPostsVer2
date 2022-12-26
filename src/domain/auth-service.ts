@@ -55,12 +55,15 @@ export class AuthService {
     }
 
     async resendConfirmationCode(email: string): Promise<EmailConfirmationType | boolean> {
+        console.log('resendConfirmationCode => email =>', email)
         const user = await this.usersRepository.findByEmail(email)
+        console.log('resendConfirmationCode => user =>', user)
         if (!user) return false
         if (user.emailConfirmation.isConfirmed) return false
         const newCode = randomUUID()
         await this.usersRepository.updateConfirmationCodeByUserId(user._id, newCode)
         await this.emailService.resendingEmailMessage(user.accountData.email, newCode)
+        console.log('resendConfirmationCode => updateCode and send Email is OK')
         return true
     }
 
